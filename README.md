@@ -3,7 +3,7 @@
 ---
 ### **прототипы размещены в папке `./ui/`**
 
-### приложение запущено на [Netlify.app](https://netlify.app)
+### приложение запущено на [Netlify.app](https://middle-spa-aleksakko.netlify.app/)
 ### ссылка на [Pull Request]() 
 ---
 ## npm команды
