@@ -1,9 +1,14 @@
+@import "./styles/normalize8.0.1.css";
 @import "./styles/mixins.scss";
 
 @include font-face("Furore", "../static/fonts/Furore-webfont");
 
 $colLight: rgb(238, 227, 179);
 $colShadow: rgb(56, 6, 80);
+$colShadow50: rgba(56, 6, 80, 0.5);
+$colShadow80: rgba(56, 6, 80, 0.8);
+$colShadow90: rgba(56, 6, 80, 0.9);
+$colShadowDark: rgb(51, 3, 73);
 $sizeAva: 100px;
 
 
@@ -46,7 +51,7 @@ input {
     }
     // стили placeholder добавлены для экспериментов с дизайном
     &::placeholder {
-        color: rgba(56, 6, 80, 0.9);
+        color: $colShadow90;
         font-size: 15px;
     }
     &:focus::placeholder{
@@ -76,8 +81,8 @@ a {
     text-align: center;
     .error-cont__digit {
         padding: 0 10px 10px;
-        @include bg-repeat(-45deg, rgba(0,0,0,0), rgba(56, 6, 80, 0.8), 5);
-        @include text-shadow(#fff);
+        @include bg-repeat(-45deg, transparent, $colShadow80, 5);
+        @include text-shadow(white);
         font-size: 120px;
     }
     span {
@@ -116,16 +121,16 @@ a {
         &.fs35px { font-size: 35px; }
         &.fs25px { font-size: 25px; }
         color: $colShadow;
-        @include bg-repeat(-45deg, rgba(0,0,0,0), rgba(56, 6, 80, 0.8), 3);
-        @include text-shadow(#fff);
+        @include bg-repeat(-45deg, transparent, $colShadow80, 3);
+        @include text-shadow(white);
         font-weight: bold;
         margin-top: 10px;
         padding: 4px 10px 0;
         border: none;
         border-radius: 3px;
         &:hover {
-            color: rgb(51, 3, 73);
-            @include bg-repeat(-45deg, rgba(0,0,0,0), rgba(56, 6, 80, 0.8), 3.4);
+            color: $colShadowDark;
+            @include bg-repeat(-45deg, transparent, $colShadow80, 3.4);
         }
     }
 }
@@ -154,7 +159,6 @@ a {
 .avatar {
     width: $sizeAva;
     height: $sizeAva;
-    background-color: #fff;
     margin-bottom: 20px;
     background: center no-repeat url("../static/img/ava.png");
     line-height: $sizeAva;
@@ -167,7 +171,7 @@ a {
         height: $sizeAva;            
         color: $colShadow;
         @include text-shadow($colLight);
-        @include bg-repeat(-45deg, rgba(0,0,0,0), rgba(56, 6, 80, 0.5), 9);    
+        @include bg-repeat(-45deg, transparent, $colShadow50, 9);    
     }    
     &:hover > a {
         visibility: visible;
@@ -181,10 +185,8 @@ a {
     display: flex;
     flex-direction: row;
     box-sizing: border-box;
-    //background-color: rgb(251, 255, 0);
 
     .chats-column {
-        //background-color: orange;
         display: flex;
         flex-direction: column;
         border-right: 2px solid $colShadow;
@@ -270,7 +272,5 @@ a {
         h1, h4 {
             margin: 0;
         }
-
     }
-
 }
