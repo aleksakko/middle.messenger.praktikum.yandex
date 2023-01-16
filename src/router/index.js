@@ -71,8 +71,7 @@ const goRouter = () => {
     document.body.addEventListener('click', e => {
         if (e.target.tagName === 'A') {
             e.preventDefault();
-            pth = e.target.pathname;
-            addDom(pth);
+            addDom(e.target.pathname);
         }
     })
 }
