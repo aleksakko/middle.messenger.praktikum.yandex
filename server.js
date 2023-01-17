@@ -5,7 +5,7 @@ const __dirname = new URL(".", import.meta.url).pathname.substr(1);
 
 const app = express();
 
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 app.use(express.static(__dirname + 'dist'));
 
@@ -14,5 +14,5 @@ app.get('/*', (req, res) => {
 });
 
 app.listen(PORT, () => {
-    console.log(`Server.express is run on port ${PORT}`);
+    console.log(`Express_server is run on port ${PORT}`);
 });
