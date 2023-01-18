@@ -64,7 +64,7 @@ const addDom = (pth) => {
 const goRouter = () => {
     render(window.location.pathname);
 
-    window.addEventListener('popstate', e => {        
+    window.addEventListener('popstate', () => {        
         render(window.location.pathname);
     })
 
