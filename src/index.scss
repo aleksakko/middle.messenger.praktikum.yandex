@@ -2,6 +2,8 @@
 @import "./styles/mixins.scss";
 
 @include font-face("Furore", "../static/fonts/Furore-webfont");
+@include font-face("PTMonoBold", "../static/fonts/PTM75F_W");
+@include font-face("PTMonoRegular", "../static/fonts/PTM55F_W");
 
 $colLight: rgb(238, 227, 179);
 $colShadow: rgb(56, 6, 80);
@@ -223,6 +225,7 @@ a {
             }
         }
         .chats-column__chats {
+            font-family: "PTMonoRegular", sans-serif;
             display: flex;
             flex-direction: column;
             list-style: none;

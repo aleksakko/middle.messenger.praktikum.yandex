@@ -1,6 +1,9 @@
 import constants from "../modules/constants.js";
 const routes = constants.routes;
 
+import mytpl from "../pages/404.mytpl";
+console.log(mytpl);
+
 import MainPage from "../pages/main.hbs";
 import _404Page from "../pages/404.hbs";
 import _500Page from "../pages/500.hbs";
@@ -69,11 +72,13 @@ const goRouter = () => {
     })
 
     document.body.addEventListener('click', e => {
-        if (e.target.tagName === 'A') {
-            e.preventDefault();
-            addDom(e.target.pathname);
-        }
-    })
+            if (e.target.tagName === 'A') {
+                e.preventDefault();
+                e.stopImmediatePropagation(); // !!!
+                addDom(e.target.pathname);
+            }
+        }, true
+    )
 }
 
 export default goRouter;
