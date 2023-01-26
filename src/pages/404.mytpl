@@ -1,8 +1,0 @@
-export default 
-`<main class="wrap">
-    <section class="error-cont">
-        <div class="error-cont__digit">404</div>
-        <span>ЗДЕСЬ ТУПИК</span><br>
-        <a href="/">ВЕРНУТЬСЯ К ЧАТАМ И НЕ ТОЛЬКО</a>
-    </section>
-</main>`
