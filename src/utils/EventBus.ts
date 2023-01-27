@@ -1,4 +1,4 @@
-type Cback = (...args: any) => void;
+type Cback = (...args: any[]) => void;
 
 export default class EventBus {
     private readonly listeners: Record<string, Cback[]> = {};
@@ -29,10 +29,12 @@ export default class EventBus {
         }
 
         this.listeners[event].forEach(listener => {
-            listener(args);
+            listener(...args);
         });
     }
 }
+
+
 
 // const eventBus = new EventBus();
 

@@ -1,23 +1,20 @@
 import EventBus from './EventBus';
 // import { v4 as makeUUID} from 'uuid';
 
-interface Props {
-    events?: Record<string, any>,   
-    [key: string]: any
-}
+type Props = Record<string, unknown>
 
 export default class Block {
     static EVENTS = {
         INIT: 'init',
         FLOW_CDM: 'flow:component-did-mount',
-        FLOW_RENDER: 'flow:render',
-        FLOW_UPDATE: 'flow:update'
+        FLOW_CDU: 'flow:component-did-update',
+        FLOW_RENDER: 'flow:render'
     }
 
     protected props: Props;
-    private eventBus: () => EventBus;
-    private _meta: { tagName: String; props: Props };
-    private _element: HTMLElement | any;
+    protected eventBus: () => EventBus;
+    private _meta: { tagName: string; props: Props };
+    private _element!: HTMLElement;
 
     /** JSDoc
    * @param {string} tagName
@@ -68,7 +65,7 @@ export default class Block {
                 } else {
                     const oldTarget = { ...target };
                     target[prop] = value;
-                    self.eventBus().emit(Block.EVENTS.FLOW_UPDATE, oldTarget, target);
+                    self.eventBus().emit(Block.EVENTS.FLOW_CDU, oldTarget, target);
                     return true;
                 }
             },
@@ -87,52 +84,54 @@ export default class Block {
 
     // B3 - функция подписки на события
     _registerEvents(eventBus: EventBus) {
+        // сначала INIT > RENDER > CDM, затем цикл CDU <> RENDER
         eventBus.on(Block.EVENTS.INIT, this.init.bind(this));
         eventBus.on(Block.EVENTS.FLOW_CDM, this._componentDidMount.bind(this));
+        eventBus.on(Block.EVENTS.FLOW_CDU, this._componentDidUpdate.bind(this));
         eventBus.on(Block.EVENTS.FLOW_RENDER, this._render.bind(this));
-        eventBus.on(Block.EVENTS.FLOW_UPDATE, this._componentDidUpdate.bind(this));
     }
     
     // Обработчики событий --------------------------------
-    // Cback event1 - Инициация
+    // Cback 1 - Инициация
     init() {
         this._createWrap();
-        this.eventBus().emit(Block.EVENTS.FLOW_RENDER); // Запуск события3 Поток Рендера
+        this.eventBus().emit(Block.EVENTS.FLOW_RENDER); // Запуск Cback 3 - Поток Рендера
     }
         _createWrap() {
             const { tagName } = this._meta;
-            this._element = this._createDocumentElement(<string>tagName);
+            this._element = this._createDocumentElement(tagName);
         }
-            _createDocumentElement(tagName: string) {
-                // Можно сделать метод, который через фрагменты в цикле создаёт сразу несколько блоков
-                const element = document.createElement(tagName);
-                // element.setAttribute('');
-                
-                return element;
-            }
+        _createDocumentElement(tagName: string) {
+            // Можно сделать метод, который через фрагменты в цикле создаёт сразу несколько блоков
+            const element = document.createElement(tagName);
+            // element.setAttribute('');
+            
+            return element;
+        }
     
     // Метод, доступный снаружи - отправляет компонент на маунтинг через emit event2 - flow:cdm
-    dispatchComponentDidMount() {
+    // Вызывается после render на странице
+    public dispatchComponentDidMount() {
         this.eventBus().emit(Block.EVENTS.FLOW_CDM);
     }
-        _componentDidMount() {
-            this.componentDidMount();
-        }
-            componentDidMount() {}
-            
-    
-    _componentDidUpdate(oldProps: Props, newProps: Props) {        
+    private _componentDidMount() {
+        this.componentDidMount();
+    }
+    // Переопределяется пользователем.
+    protected componentDidMount() {}
+         
+
+    private _componentDidUpdate(oldProps: Props, newProps: Props) {        
         if (this.componentDidUpdate(oldProps, newProps)) {
             this.eventBus().emit(Block.EVENTS.FLOW_RENDER);
         }
     }
-        componentDidUpdate(oldProps: Props, newProps: Props) {
-            if (oldProps === newProps) { // временная мера для typescript'а
-            return true;
-            }
-        }
+    // Переопределяется пользователем.
+    protected componentDidUpdate(oldProps: Props, newProps: Props) {
+        return (oldProps === newProps) ? true : false;
+    }
 
-    setProps = (nextProps: Props) => {
+    publicsetProps = (nextProps: Props) => {
         if (!nextProps) {
             return;
         }
@@ -152,18 +151,17 @@ export default class Block {
         
         this._addEvents();
     }
-        // Переопределяется пользователем. Необходимо вернуть разметку
-        protected render(): string {
-            return '';            
-        }
-                
-        _addEvents() {
-            const { events } = <Props>this.props;
-    
-            Object.keys( <Record<string, any>>events ).forEach(eName => {
-                this._element.addEventListener(eName, (<any>events)[eName] );
-            });
-        }
+    // Переопределяется пользователем. Необходимо вернуть разметку
+    protected render(): string {
+        return '';            
+    }               
+    _addEvents() {
+        const { events = {} } = this.props as { events: Record<string, () => void> };
+
+        Object.keys( events ).forEach(eName => {
+            this._element.addEventListener(eName, events[eName] );
+        });
+    }
         
         
     show() {

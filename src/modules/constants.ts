@@ -9,6 +9,9 @@ export const constants = {
         profile: '/profile',
         changeProf: '/change-profile',
         changePass: '/change-password'
+    },
+    regExps: {
+        
     }
 }
 
