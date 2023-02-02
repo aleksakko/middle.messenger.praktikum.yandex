@@ -80,8 +80,8 @@ export default class Form extends Block {
                                 e.preventDefault();
                                 const formData: Record<string, string> = {};
                                 passwordCheck = ['', ''];
-                                let checkForm = true;
-                                window.asdf = [];
+                                let checkForm = true; // если хотя бы один элемент не пройдет валидацию
+
                                 Object.keys(tmpl.labelfor).forEach((inputKey) => {
                                     let key = tmpl.labelfor[inputKey],
                                         elemForm = document.getElementById(key) as HTMLInputElement,
@@ -96,11 +96,10 @@ export default class Form extends Block {
                                         elemForm.placeholder = resValidate[1] as string;
                                         checkForm = false;
                                     }
-                                    asdf.push(elemForm);
+
                                     formData[key] = value;
                                 });
 
-                                // formData.id = this.id;
                                 if (checkForm) console.log('Данные для отправки:', '\n', formData);
                             }
                         }
