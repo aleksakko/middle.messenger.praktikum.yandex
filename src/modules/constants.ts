@@ -1,18 +1,12 @@
 export const constants = {
-    routes: {
-        main: '/',
-        _404: '/error-404',
-        _500: '/error-500',
-        auth: '/authorization',
-        reg: '/registration',
-        chats: '/list-of-chats',
-        profile: '/profile',
-        changeProf: '/change-profile',
-        changePass: '/change-password'
-    },
-    regExps: {
-        
+    regExp: {
+        first_second_name: /^[A-ZА-ЯЁ][-a-zа-яё]*$/,
+        login: /^(?=.*[a-zA-Z])[\w-]{3,20}$/,
+        email: /^[\w-]+@[a-zA-Z]+\.[a-zA-Z]+$/,
+        password: /^(?=.*[A-Z])(?=.*\d)[a-zA-Z0-9]{8,40}$/,
+        phone: /^(\+?\d{10,15})$/,
+        message: /\S+/
     }
 }
 
-export const routes = constants.routes;
+export const regExp = constants.regExp;

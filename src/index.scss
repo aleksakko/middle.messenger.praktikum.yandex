@@ -11,6 +11,7 @@ $colShadow50: rgba(56, 6, 80, 0.5);
 $colShadow80: rgba(56, 6, 80, 0.8);
 $colShadow90: rgba(56, 6, 80, 0.9);
 $colShadowDark: rgb(51, 3, 73);
+$colErrorRed: rgb(145, 0, 36);
 $sizeAva: 100px;
 
 
@@ -43,7 +44,9 @@ header {
 }
 input {
     cursor: text;    
-    font-family: "Furore", sans-serif;
+    font-family: "PTMonoBold", sans-serif;
+    color: $colShadowDark;
+    width: 16em;
     border: 1px solid $colShadow;
     border-radius: 2px;
     &:focus {                
@@ -54,7 +57,12 @@ input {
     // стили placeholder добавлены для экспериментов с дизайном
     &::placeholder {
         color: $colShadow90;
-        font-size: 15px;
+        font-size: 14px;
+    }
+    &.placeRed::placeholder {
+        font-family: "Furore", sans-serif;
+        color: $colErrorRed;
+        font-size: 11px;
     }
     &:focus::placeholder{
         color: transparent;

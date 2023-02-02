@@ -1,7 +1,7 @@
 import EventBus from './EventBus';
-// import { v4 as makeUUID} from 'uuid';
+import randomID from './randomID';
 
-type Props = Record<string, unknown>
+type Props = Record<string, any>
 
 export default class Block {
     static EVENTS = {
@@ -11,10 +11,12 @@ export default class Block {
         FLOW_RENDER: 'flow:render'
     }
 
+    public id: string;
     protected props: Props;
     protected eventBus: () => EventBus;
     private _meta: { tagName: string; props: Props };
-    private _element!: HTMLElement;
+    private _element!: HTMLElement | HTMLInputElement | HTMLButtonElement;
+    protected kids: Record<string, Block>;
 
     /** JSDoc
    * @param {string} tagName
@@ -24,38 +26,35 @@ export default class Block {
    */
 
     // START CONSTRUCTOR ---------------------------------
-    constructor (tagName: string = "div", props: Props = {}) {
-        // A1. Сохраняем метаинфо от пользователя
-        // A2. Генерируем уникальный UUID, если требуется
-        // A3. Обертка Proxy для ограничения доступа к _защищенным props'ам
-        this._meta = { tagName, props };
-        // this._id = makeUUID();
-        this.props = this._makePropsProxy(props); 
-        
-        // B1. Создаем экземпляр EventBus ({}.listeners с {событие1: [массив колбеков], 2:[], ...} + подписка, отписка, emit)
-        // B2. Делаем внешний доступ к EventBus через this.eventBus()
-        // B3. Подписываемся на 3 события из static EVENTS - инициация, маунтинг, рендер
+    constructor (tagName: string = "div", propsAndKids: Props = {}) {
+        const { props, kids } = this._getKidsAndProps(propsAndKids);
+        this._meta = { tagName, props }; // параметры от инстанса
+        this.id = randomID(6); // генерируем уникальный id
+        this.kids = kids; // отделенные от пропсов сами элементы-инстансы
+        this.props = this._makePropsProxy(props); // делаем обёртку Proxy
+        //console.log('constructor Block')
+        // Создаем экземпляр EventBus ({}.listeners с {ev1: [массив колбеков], ev2:[], ...} + on, off, emit)
         const eventBus = new EventBus();
-        this.eventBus = () => eventBus;
+        // Делаем внешний доступ к EventBus через this.eventBus()
+        this.eventBus = () => eventBus; 
+        // подписка инстанса на жизн.цикл - init, cdm, cdu, render
         this._registerEvents(eventBus);
         
-        // C1. Запускаем событие инициации с запусками 
+        // запуск жизн.цикла с события init
         eventBus.emit(Block.EVENTS.INIT);
     }
     // END CONSTRUCTOR ------------------------------------
 
-    // A3 - функция Proxi-обёртки для пропсов
+    // функция Proxi-обёртки для пропсов
     _makePropsProxy(props: Props) {
-        // Ещё один способ передачи this, но он больше не применяется с приходом ES6+
         const self = this;
         const proxyProps = new Proxy(props, {
             get(target: Props, prop: string) {
                 if (prop[0] === '_') {
                     throw new Error('Нет доступа');
                 }
-        
                 const value = target[prop];
-                    return typeof value === 'function' ? value.bind(target) : value;
+                return typeof value === 'function' ? value.bind(target) : value;
             },
             set(target: Props, prop: string, value) {
                 if (prop[0] === '_') {
@@ -81,11 +80,25 @@ export default class Block {
         
         return proxyProps;
     }
+    // вспомогательный метод - разделение пропсов на Пропсы и Детей 
+    _getKidsAndProps(propsAndKids: Record<string, any | Block>) {
+        const props: Record<string, any> = {};
+        const kids: Record<string, Block> = {};
+        Object.entries(propsAndKids).forEach(([key, val]) => {
+            if (val instanceof Block) {
+                kids[key] = val;
+            } else {
+                props[key] = val;
+            }
+        })
 
-    // B3 - функция подписки на события
+        return { props, kids };
+    }
+
+    // функция подписки на события
     _registerEvents(eventBus: EventBus) {
-        // сначала INIT > RENDER > CDM, затем цикл CDU <> RENDER
-        eventBus.on(Block.EVENTS.INIT, this.init.bind(this));
+        // сначала INIT > RENDER > CDM, затем цикл CDU - RENDER
+        eventBus.on(Block.EVENTS.INIT, this._init.bind(this));
         eventBus.on(Block.EVENTS.FLOW_CDM, this._componentDidMount.bind(this));
         eventBus.on(Block.EVENTS.FLOW_CDU, this._componentDidUpdate.bind(this));
         eventBus.on(Block.EVENTS.FLOW_RENDER, this._render.bind(this));
@@ -93,9 +106,15 @@ export default class Block {
     
     // Обработчики событий --------------------------------
     // Cback 1 - Инициация
-    init() {
+    protected init() {}
+    private _init() {   
+        //console.log('init Block')
+        
         this._createWrap();
+        this.init();
+        //setTimeout(() => {
         this.eventBus().emit(Block.EVENTS.FLOW_RENDER); // Запуск Cback 3 - Поток Рендера
+   // }, 1);
     }
         _createWrap() {
             const { tagName } = this._meta;
@@ -123,43 +142,73 @@ export default class Block {
 
     private _componentDidUpdate(oldProps: Props, newProps: Props) {        
         if (this.componentDidUpdate(oldProps, newProps)) {
+            console.log(`CD_Update render ${this.element}`, newProps);
             this.eventBus().emit(Block.EVENTS.FLOW_RENDER);
         }
     }
     // Переопределяется пользователем.
     protected componentDidUpdate(oldProps: Props, newProps: Props) {
-        return (oldProps === newProps) ? true : false;
+        return (oldProps !== newProps) ? true : false;
     }
 
-    publicsetProps = (nextProps: Props) => {
+    public setProps = (nextProps: Props) => {
         if (!nextProps) {
             return;
         }
 
         Object.assign(this.props, nextProps);
     }
-
     
     private _render() {
+        //console.log('render Block')
         const block = this.render();
         // Это небезопасный метод для упрощения логики
-        // Используйте шаблонизатор из npm или напишите свой безопасный
+        // Используйте шаблонизатор из npm или напишите свой безопасный        
         // Нужно компилировать не в строку (или делать это правильно),
+        this._element.innerHTML = '';
         // либо сразу превращать в DOM-элементы и возвращать из compile DOM-ноду
         // Удалить старые события через removeEventListener
-        this._element.innerHTML = block;
-        
+        this._element.append(block);
         this._addEvents();
     }
     // Переопределяется пользователем. Необходимо вернуть разметку
-    protected render(): string {
-        return '';            
-    }               
+    protected render(): DocumentFragment {
+        return new DocumentFragment(); // возвращает шаблонизатор       
+    }
+    // Вызывают наследники
+    protected compile(template: HandlebarsTemplateDelegate, context: Props) {
+        const contextAndStubs = { ...context, ...this.props };
+        
+        // замена компонентов на заглушки с уникальным id
+        Object.entries(this.kids).forEach(([key, component]) => {
+            contextAndStubs[key] = `<div data-id="${component.id}"></div>`;
+        });
+        // console.log(contextAndStubs);
+        
+        // выгрузка шаблона с заглушками в html-элементы во временный template
+        const html = template(contextAndStubs);
+        // console.log(html)
+        const temp = document.createElement('template');
+
+        temp.innerHTML = html;
+        
+        // замена заглушек обратно на элементы
+        Object.entries(this.kids).forEach(([_, component]) => {
+            const stub = temp.content.querySelector(`[data-id="${component.id}"]`);
+            
+            if (!stub) return;
+
+            stub.replaceWith(component.getContent());
+        });
+
+        return temp.content;
+    }
+
     _addEvents() {
         const { events = {} } = this.props as { events: Record<string, () => void> };
-
+        
         Object.keys( events ).forEach(eName => {
-            this._element.addEventListener(eName, events[eName] );
+            this._element.addEventListener( eName, events[eName] );
         });
     }
         

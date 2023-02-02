@@ -1,16 +1,18 @@
 import './index.scss';
 import goRouter from './router';
+
+// создано несколько хелперов для handlebars
+import './utils/handlebarsHelpers.ts';
+
 goRouter();
 
-
-
-import { MainPage } from './pages/Main';
+//import ProfilePage from './pages/Profile';
 
 window.addEventListener('DOMContentLoaded', () => {
-    const root: HTMLElement = <HTMLElement>document.getElementById('app2');
+    
+    // const profilePage: ProfilePage = new ProfilePage({});
 
-    const mainPage = new MainPage();
-
-    root.append(mainPage.getContent());
+    // const test = document.getElementById('app-block') as HTMLElement;
+    // test.append(profilePage.getContent());
 })
  

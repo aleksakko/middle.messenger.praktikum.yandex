@@ -1,61 +1,99 @@
-import { routes } from "../modules/constants";
+import routes from "./routes";
 
-import mytpl from "../pages/404.mytpl";
-console.log(mytpl);
+//import mytpl from "../pages/temp/404.mytpl";
+//console.log(mytpl);
 
-import MainPage from "../pages/temp/main.hbs";
-import _404Page from "../pages/temp/404.hbs";
-import _500Page from "../pages/temp/500.hbs";
-import AuthPage from "../pages/temp/auth.hbs";
-import RegPage from "../pages/temp/reg.hbs";
+import ErrorProps from './errorProps';
+import ErrorPage from '../components/Error';
+import MainPage from '../pages/Main';
+import AuthPage from "../pages/Auth";
+import RegPage from "../pages/Reg";
+// import ChatsPage from "../pages/chats-list";
+import ProfilePage from "../pages/Profile";
+import ChangeProfPage from "../pages/ChangeProfile";
+import ChangePassPage from "../pages/ChangePass";
+const components: Record<string, any> = {
+    MainPage, AuthPage, RegPage, ProfilePage, ChangeProfPage, ChangePassPage, ErrorPage
+}; // объект с конструкторами-компонентов
+//const components = {MainPage, _404Page, _500Page, AuthPage, RegPage, 
+    // ChatsPage, ProfilePage, ChangeProfPage, ChangePassPage}
+
+// import MmainPage from "../pages/temp/main.hbs";
+// import AuthPage from "../pages/temp/auth.hbs";
+// import RegPage from "../pages/temp/reg.hbs";
 import ChatsPage from "../pages/temp/chats-list.hbs";
-import ProfilePage from "../pages/temp/profile.hbs";
-import ChangeProfPage from "../pages/temp/change-profile.hbs";
-import ChangePassPage from "../pages/temp/change-pass.hbs";
+// import ProfilePage from "../pages/temp/profile.hbs";
+// import ChangeProfPage from "../pages/temp/change-profile.hbs";
+// import ChangePassPage from "../pages/temp/change-pass.hbs";
+
+// (пока в форме модуля) объект-кэш с экземплярами страниц активной сессии
+export const sessionPages: Record<string, any> = {}; 
 
 const render = (pth: string) => {
-    let result: string, 
-        title: string = 'messenger';
+    let result: string | any, // any убрать
+        namepage: string = '',
+        title: string,
+        props: any,
+        keyError: Record<string, string | number> = {};
     
     try {
         if (routes.main.match(pth)) {
-            result = MainPage();
+            namepage = 'MainPage';
+            title = 'messenger';
         } else if (routes.auth.match(pth)) {
-            result = AuthPage();
+            namepage = 'AuthPage';
             title = 'Авторизация';
         } else if (routes.reg.match(pth)) {
-            result = RegPage();
-            title = 'Регистрация';
+            namepage = 'RegPage';
+            title = 'Регистрация';            
         } else if (routes.chats.match(pth)) {
-            result = ChatsPage();
+            result = ChatsPage({});
             title = 'Чаты';
         } else if (routes.profile.match(pth)) {
-            result = ProfilePage();
+            namepage = 'ProfilePage';
             title = 'Личность';
         } else if (routes.changeProf.match(pth)) {
-            result = ChangeProfPage();
+            namepage = 'ChangeProfPage';
             title = 'Изменение личности';
         } else if (routes.changePass.match(pth)) {
-            result = ChangePassPage();
+            namepage = 'ChangePassPage';
             title = 'Изменение пароля';
         } else if (routes._404.match(pth)) {
-            result = _404Page();
+            namepage = 'ErrorPage404';
+            keyError = ErrorProps['404'];
             title = '404';
         } else if (routes._500.match(pth)) {
-            result = _500Page();
+            namepage = 'ErrorPage500';
+            keyError = ErrorProps['500'];
             title = '500';
         } else {
-            result = _404Page();
+            namepage = 'ErrorPage404';
+            keyError = ErrorProps['404'];
             title = '404';
         }
     } catch (error) {
-        result = _500Page();
+        namepage = 'ErrorPage500';
+        keyError = ErrorProps['500'];
         title = '500';
         console.log(error);
     }
-
-    console.log(typeof result);
-    (<HTMLElement>document.getElementById('app')).innerHTML = result;
+    //console.log(typeof result);
+    const app = (<HTMLElement>document.getElementById('app'));
+    if (namepage) {
+        if (!sessionPages[namepage]) {
+            if (keyError.href) {
+                //console.log(namepage, keyError.href)
+                sessionPages[namepage] = new components['ErrorPage'](keyError);
+            } else {
+                //console.log(namepage);
+                sessionPages[namepage] = new components[namepage](props);
+            }
+        }
+        // console.log(sessionPages);
+        result = sessionPages[namepage];
+        app.innerHTML = ''; 
+        app.append(result.getContent());
+    } else app.innerHTML = result;
     (<HTMLTitleElement>document.getElementsByTagName('title')[0]).textContent = 'SPA ' + title;
     (<HTMLElement>document.getElementById('header-title')).textContent = title;
 }
@@ -68,7 +106,7 @@ const addDom = (pth: string) => {
 const goRouter = () => {
     render(window.location.pathname);
 
-    window.addEventListener('popstate', () => {        
+    window.addEventListener('popstate', () => {
         render(window.location.pathname);
     })
 
@@ -76,9 +114,9 @@ const goRouter = () => {
             const target = e.target as HTMLAnchorElement;
             if (target.tagName === 'A') {
                 e.preventDefault();
-                e.stopImmediatePropagation(); // !!!
+                //e.stopImmediatePropagation(); // !!!
                 addDom(target.pathname);
-                console.log(e.target);
+                //console.log(e.target);
             }
         }, true
     )
