@@ -17,7 +17,7 @@ export default class SectionWith extends Block {
     }
     
     init() {
-        let i: number = 0;
+        let i = 0;
         this.tmpl = {
             labelSpanUp: {},
             labelSpanDown: {}

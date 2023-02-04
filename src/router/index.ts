@@ -8,31 +8,23 @@ import ErrorPage from '../components/Error';
 import MainPage from '../pages/Main';
 import AuthPage from "../pages/Auth";
 import RegPage from "../pages/Reg";
-// import ChatsPage from "../pages/chats-list";
-import ChatsPageTest from "../pages/Chats";
+import ChatsPage from "../pages/Chats";
 import ProfilePage from "../pages/Profile";
 import ChangeProfPage from "../pages/ChangeProfile";
 import ChangePassPage from "../pages/ChangePass";
-const components: Record<string, any> = {
-    MainPage, AuthPage, RegPage, ProfilePage, ChangeProfPage, ChangePassPage, ErrorPage, ChatsPageTest
-}; // объект с конструкторами-компонентов
-//const components = {MainPage, _404Page, _500Page, AuthPage, RegPage, 
-    // ChatsPage, ProfilePage, ChangeProfPage, ChangePassPage}
 
-// import MmainPage from "../pages/temp/main.hbs";
-// import AuthPage from "../pages/temp/auth.hbs";
-// import RegPage from "../pages/temp/reg.hbs";
-import ChatsPage from "../pages/temp/chats-list.hbs";
-// import ProfilePage from "../pages/temp/profile.hbs";
-// import ChangeProfPage from "../pages/temp/change-profile.hbs";
-// import ChangePassPage from "../pages/temp/change-pass.hbs";
+// объект с конструкторами-компонентов
+const components: Record<string, any> = {
+    MainPage, AuthPage, RegPage, ProfilePage, ChangeProfPage, ChangePassPage, ErrorPage, ChatsPage
+};
+
 
 // (пока в форме модуля) объект-кэш с экземплярами страниц активной сессии
 export const sessionPages: Record<string, any> = {}; 
 
 const render = (pth: string) => {
     let result: string | any, // any убрать
-        namepage: string = '',
+        namepage = '',
         title: string,
         props: any,
         keyError: Record<string, string | number> = {};
@@ -46,13 +38,10 @@ const render = (pth: string) => {
             title = 'Авторизация';
         } else if (routes.reg.match(pth)) {
             namepage = 'RegPage';
-            title = 'Регистрация';            
+            title = 'Регистрация';        
         } else if (routes.chats.match(pth)) {
-            result = ChatsPage({});
+            namepage = 'ChatsPage';
             title = 'Чаты';
-        } else if ('/chats-test'.match(pth)) {
-            namepage = 'ChatsPageTest';
-            title = 'Чаты-тест';
         } else if (routes.profile.match(pth)) {
             namepage = 'ProfilePage';
             title = 'Личность';

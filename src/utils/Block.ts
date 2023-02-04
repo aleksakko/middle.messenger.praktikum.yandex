@@ -1,7 +1,8 @@
+
 import EventBus from './EventBus';
 import randomID from './randomID';
 
-type Props = Record<string, any>
+type Props = Record<string, unknown>
 
 export default class Block {
     static EVENTS = {
@@ -26,7 +27,7 @@ export default class Block {
    */
 
     // START CONSTRUCTOR ---------------------------------
-    constructor (tagName: string = "div", propsAndKids: Props = {}) {
+    constructor (tagName = "div", propsAndKids: Props = {}) {
         const { props, kids } = this._getKidsAndProps(propsAndKids);
         this._meta = { tagName, props }; // параметры от инстанса
         this.id = randomID(6); // генерируем уникальный id
@@ -47,7 +48,6 @@ export default class Block {
 
     // функция Proxi-обёртки для пропсов
     _makePropsProxy(props: Props) {
-        const self = this;
         const proxyProps = new Proxy(props, {
             get(target: Props, prop: string) {
                 if (prop[0] === '_') {
@@ -56,7 +56,7 @@ export default class Block {
                 const value = target[prop];
                 return typeof value === 'function' ? value.bind(target) : value;
             },
-            set(target: Props, prop: string, value) {
+            set:(target: Props, prop: string, value) => {
                 if (prop[0] === '_') {
                     throw new Error('Нет доступа');
                 } else if (target[prop] === value) {
@@ -64,7 +64,7 @@ export default class Block {
                 } else {
                     const oldTarget = { ...target };
                     target[prop] = value;
-                    self.eventBus().emit(Block.EVENTS.FLOW_CDU, oldTarget, target);
+                    this.eventBus().emit(Block.EVENTS.FLOW_CDU, oldTarget, target);
                     return true;
                 }
             },
@@ -106,6 +106,7 @@ export default class Block {
     
     // Обработчики событий --------------------------------
     // Cback 1 - Инициация
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     protected init() {}
     private _init() {   
         //console.log('init Block')
@@ -137,6 +138,7 @@ export default class Block {
         this.componentDidMount();
     }
     // Переопределяется пользователем.
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     protected componentDidMount() {}
          
 
@@ -192,7 +194,7 @@ export default class Block {
         temp.innerHTML = html;
         
         // замена заглушек обратно на элементы
-        Object.entries(this.kids).forEach(([_, component]) => {
+        Object.entries(this.kids).forEach(([, component]) => {
             const stub = temp.content.querySelector(`[data-id="${component.id}"]`);
             
             if (!stub) return;

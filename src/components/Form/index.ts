@@ -21,12 +21,12 @@ export default class Form extends Block {
         let passwordCheck: string[] = ['', ''];
 
         //console.log('init Form');
-        let i: number = 0;
+        let i = 0;
         this.tmpl = {
             labelfor: {},
             label: {}
         };
-        let tmpl = this.tmpl;
+        const tmpl = this.tmpl;
         const creator = this.props.creator;
         const PageParam = this.props[`${creator}Param`] ? this.props[`${creator}Param`] : undefined;
         if (PageParam) PageParam.forEach((prop: Record<string, any>) => {
@@ -83,7 +83,7 @@ export default class Form extends Block {
                                 let checkForm = true; // если хотя бы один элемент не пройдет валидацию
 
                                 Object.keys(tmpl.labelfor).forEach((inputKey) => {
-                                    let key = tmpl.labelfor[inputKey],
+                                    const key = tmpl.labelfor[inputKey],
                                         elemForm = document.getElementById(key) as HTMLInputElement,
                                         value = elemForm.value;
                                     if (elemForm.id === 'password') passwordCheck[0] = target.value;

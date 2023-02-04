@@ -11,7 +11,7 @@ export default class MainPage extends Block {
     }
 
     init() {       
-        let i: number = 0;
+        let i = 0;
         alinkInfo.forEach((prop: Record<string, string>) => {
             this.kids[`alink${i++}`] = new Alink({
                 href: prop.href,
@@ -31,10 +31,6 @@ export default class MainPage extends Block {
 }
 
 const alinkInfo = [
-    {
-        href: '/chats-test',
-        label: 'чаты-тест' 
-    },
     {
         href: '/authorization',
         label: 'авторизация' 

@@ -18,7 +18,7 @@ const MessageIfFalse: Record<string, string> = {
     message: 'Пустая строка'
 }
 
-export default function validateElem (key: string, val: string, eventName: string = '', passwordCheck: string[] = ['','']) {
+export default function validateElem (key: string, val: string, eventName = '', passwordCheck: string[] = ['','']) {
     // console.log(key, val, eventName);
     // если событие blur, то разрешить пока не вводить ничего (пока пользователь думает и заполняет другие поля)
         
