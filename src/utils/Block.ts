@@ -2,7 +2,7 @@
 import EventBus from './EventBus';
 import randomID from './randomID';
 
-type Props = Record<string, unknown>
+type Props = Record<string, any>
 
 export default class Block {
     static EVENTS = {

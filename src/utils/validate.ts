@@ -19,7 +19,6 @@ const MessageIfFalse: Record<string, string> = {
 }
 
 export default function validateElem (key: string, val: string, eventName = '', passwordCheck: string[] = ['','']) {
-    // console.log(key, val, eventName);
     // если событие blur, то разрешить пока не вводить ничего (пока пользователь думает и заполняет другие поля)
         
     if (eventName === 'blur' && val === '') return [true, 'с поля ввода ушел фокус'];
@@ -29,7 +28,7 @@ export default function validateElem (key: string, val: string, eventName = '', 
     ) return [false, MessageIfFalse.password_repeat];
     
     const res = val.match(RegExp[key]);
-    //console.log(res);
+    
     if (res !== null) return [true, 'валидация поля пройдена успешно']
     else return [false, MessageIfFalse[key]];
 }

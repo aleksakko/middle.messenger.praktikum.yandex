@@ -33,19 +33,3 @@ export default class EventBus {
         });
     }
 }
-
-
-
-// const eventBus = new EventBus();
-
-// const cback = (...args: []) => {
-//     console.log('Event emitted', args);
-// }
-
-
-// eventBus.on('myEvent', cback);
-
-// eventBus.emit('myEvent', 'some', 'data', 'to', 'process');
-// eventBus.off('myEvent', cback);
-
-// console.log(eventBus.listeners); 
