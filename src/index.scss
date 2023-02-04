@@ -7,6 +7,9 @@
 
 $colLight: rgb(238, 227, 179);
 $colShadow: rgb(56, 6, 80);
+$colShadow10: rgb(56, 6, 80, 0.1);
+$colShadow20: rgb(56, 6, 80, 0.2);
+$colShadow30: rgb(56, 6, 80, 0.3);
 $colShadow50: rgba(56, 6, 80, 0.5);
 $colShadow80: rgba(56, 6, 80, 0.8);
 $colShadow90: rgba(56, 6, 80, 0.9);
@@ -14,6 +17,13 @@ $colShadowDark: rgb(51, 3, 73);
 $colErrorRed: rgb(145, 0, 36);
 $sizeAva: 100px;
 
+// рабочие классы для JS -------------
+
+.hidden {
+    display: none !important;
+}
+
+// -----------------------------------
 
 body {
     margin: 0;
@@ -59,7 +69,7 @@ input {
         color: $colShadow90;
         font-size: 14px;
     }
-    &.placeRed::placeholder {
+    &.place-red::placeholder {
         font-family: "Furore", sans-serif;
         color: $colErrorRed;
         font-size: 11px;
@@ -91,7 +101,7 @@ a {
     text-align: center;
     .error-cont__digit {
         padding: 0 10px 10px;
-        @include bg-repeat(-45deg, transparent, $colShadow80, 5);
+        @include bg-repeat(-45deg, transparent, $colShadow80, 5, 5);
         @include text-shadow(white);
         font-size: 120px;
     }
@@ -131,7 +141,7 @@ a {
         &.fs35px { font-size: 35px; }
         &.fs25px { font-size: 25px; }
         color: $colShadow;
-        @include bg-repeat(-45deg, transparent, $colShadow80, 3);
+        @include bg-repeat(-45deg, transparent, $colShadow80, 3, 3);
         @include text-shadow(white);
         font-weight: bold;
         margin-top: 10px;
@@ -140,7 +150,7 @@ a {
         border-radius: 3px;
         &:hover {
             color: $colShadowDark;
-            @include bg-repeat(-45deg, transparent, $colShadow80, 3.4);
+            @include bg-repeat(-45deg, transparent, $colShadow80, 7, 7);
         }
     }
 }
@@ -181,7 +191,7 @@ a {
         height: $sizeAva;            
         color: $colShadow;
         @include text-shadow($colLight);
-        @include bg-repeat(-45deg, transparent, $colShadow50, 9);    
+        @include bg-repeat(-45deg, transparent, $colShadow30, 8, 8);    
     }    
     &:hover > a {
         visibility: visible;
@@ -200,6 +210,7 @@ a {
         display: flex;
         flex-direction: column;
         border-right: 2px solid $colShadow;
+        padding-right: 0px;
         .chats-column__profile {
             display: flex;
             height: 70px;
@@ -216,6 +227,7 @@ a {
             }
             input {
                 background: center no-repeat url("../static/img/search.png");
+                font-family: "Furore", sans-serif;
                 background-position-x: 28px;
                 height: 70px;
                 background-color: transparent;
@@ -233,32 +245,43 @@ a {
             }
         }
         .chats-column__chats {
-            // font-family: "PTMonoRegular", sans-serif;
-            display: flex;
-            flex-direction: column;
-            list-style: none;
+            //возможно font-family: "PTMonoBold", sans-serif;
             padding: 0;
-            margin: 5px 0 5px 5px;            
-
+            margin: 0;
+            overflow: hidden;
+            @include bg-repeat(-45deg, transparent, $colShadow20, 10, 10);
+            ul {
+                display: flex;
+                flex-direction: column;
+                list-style: none;
+                margin: 0;            
+                padding: 0;
+            }
             li {                
                 display: flex;
                 flex-direction: row;
-                width: 100%;
+                width: 98%;
+                margin: 0 auto;
                 border-bottom: 1px solid $colShadow;
+                &:hover {
+                    background-color: $colLight;
+                    cursor: crosshair;
+                    & > .short-info span:first-child {
+                        font-weight: bold;
+                    }
+                }
                 .ava-chat {
                     width: 50px;
                     height: 50px;
-                    margin: 3px 3px 3px 0;                
+                    margin: 4px;                
                     background: center no-repeat url("../static/img/user1.png");
                     border: 1px solid $colShadow;
+                    background-color: $colLight;
                 }
                 .short-info {
                     display: flex;
                     flex: 1;
                     flex-direction: column;
-                    & span:first-child:hover {
-                        font-weight: bold;
-                    }
                     & span:last-child {
                         font-size: 12px;
                     }
@@ -266,6 +289,7 @@ a {
                 .about {
                     padding: 1px 1px 0 0;
                     span {
+                        background-color: $colLight;
                         display: inline-block;
                         border: 1px solid $colShadow;
                     }
@@ -276,12 +300,47 @@ a {
     .chat-cont {
         width: 100%;
         display: flex;
+        flex-direction: column;
         div {
             margin: auto;
             text-align: center;
         }
         h1, h4 {
             margin: 0;
+        }
+        .write-message-cont {
+            display: flex;
+            flex-direction: row;
+            padding: 4px;
+            height: 58px;
+            & > #message {
+                resize: none;
+                width: 100%;
+                border: 1px solid $colShadow80;
+                color: $colShadowDark;
+                overflow-y: inherit;
+                font-size: 14px;
+                margin-right: 4px;                
+                background-color: transparent;
+                border-radius: 2px;
+                &:hover {
+                    border: 2px solid $colShadow80;
+                }
+            }
+            & > button {
+                font-family: inherit; 
+                color: $colShadow;
+                @include bg-repeat(-45deg, transparent, $colShadow50, 5, 5);
+                @include text-shadow(white);
+                padding: 4px 10px 0;
+                font-weight: bold;
+                border: none;
+                border-radius: 3px;
+                &:hover {
+                    color: $colShadowDark;
+                    @include bg-repeat(-45deg, transparent, $colShadow80, 7, 7);
+                }
+            }
         }
     }
 }

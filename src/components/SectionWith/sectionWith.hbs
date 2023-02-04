@@ -16,5 +16,11 @@
           {{{this}}}
       </div>
     {{/if}}
+    {{#if (startsWith @key "texta")}}
+          {{{this}}}
+    {{/if}}
+    {{#if (startsWith @key "button")}}
+          {{{this}}}
+    {{/if}}
   {{/each}}
 {{/with}}

@@ -14,7 +14,7 @@ export default class ProfilePage extends Block {
     init() {   
         this.kids.sectionWith = new SectionWith({
             creator: 'ProfilePage',
-            className: 'profile-cont',
+            className: ['profile-cont'],
             childClassName: 'profile-cont__field',
             ProfilePageParam: ProfilePageParam
         });

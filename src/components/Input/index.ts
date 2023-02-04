@@ -11,6 +11,7 @@ export default class Input extends Block {
             this.element.setAttribute('type', this.props.type);
             this.element.setAttribute('id', this.props.idName);
             this.element.setAttribute('name', this.props.idName);
+            if (this.props.placeholder) this.element.setAttribute('placeholder', this.props.placeholder);
             if (this.props.value) this.element.value = this.props.value;
             if (this.props.required) {this.element.setAttribute('required', '');}
             // в инстансе Инпута в props.class можно добавить [] с классами для кнопки

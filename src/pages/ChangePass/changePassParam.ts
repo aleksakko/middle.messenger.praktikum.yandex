@@ -29,7 +29,7 @@ const ChangePassPageParam = [
         tag: 'button',
         label: 'изменить пароль',
         type: 'submit',
-        class: ['btn__main', 'fs25px']
+        className: ['btn__main', 'fs25px']
     },    
     {
         tag: 'a',

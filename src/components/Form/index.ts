@@ -48,9 +48,9 @@ export default class Form extends Block {
                             if (target.id === 'password') passwordCheck[0] = target.value;
                             if (target.id === 'password_repeat') passwordCheck[1] = target.value;
                             const resValidate = validateElem(target.id, target.value, 'blur', passwordCheck);
-                            if (!resValidate[0]) {                                
+                            if (!resValidate[0]) {
                                 target.value = '';
-                                target.classList.add('placeRed');
+                                target.classList.add('place-red');
                                 target.placeholder = resValidate[1] as string;
                             }
                         }
@@ -70,7 +70,7 @@ export default class Form extends Block {
                 this.kids[`button${i++}`] = new Button({
                     label: prop.label,
                     type: prop.type,
-                    class: prop.class,
+                    className: prop.className,
                     events: {
 
                         // ВАЛИДАЦИЯ И ОТПРАВКА ФОРМЫ (на данный момент выводится в консоль)
@@ -100,10 +100,10 @@ export default class Form extends Block {
                                     formData[key] = value;
                                 });
 
-                                if (checkForm) console.log('Данные для отправки:', '\n', formData);
+                                if (checkForm) console.log('Данные для отправки:', '\n', formData)
+                                    else console.log('Валидация не пройдена');
                             }
                         }
-
                     }
                 })
             } else if (prop.tag === 'avaChange') {

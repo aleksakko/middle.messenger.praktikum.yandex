@@ -9,11 +9,12 @@ import MainPage from '../pages/Main';
 import AuthPage from "../pages/Auth";
 import RegPage from "../pages/Reg";
 // import ChatsPage from "../pages/chats-list";
+import ChatsPageTest from "../pages/Chats";
 import ProfilePage from "../pages/Profile";
 import ChangeProfPage from "../pages/ChangeProfile";
 import ChangePassPage from "../pages/ChangePass";
 const components: Record<string, any> = {
-    MainPage, AuthPage, RegPage, ProfilePage, ChangeProfPage, ChangePassPage, ErrorPage
+    MainPage, AuthPage, RegPage, ProfilePage, ChangeProfPage, ChangePassPage, ErrorPage, ChatsPageTest
 }; // объект с конструкторами-компонентов
 //const components = {MainPage, _404Page, _500Page, AuthPage, RegPage, 
     // ChatsPage, ProfilePage, ChangeProfPage, ChangePassPage}
@@ -49,6 +50,9 @@ const render = (pth: string) => {
         } else if (routes.chats.match(pth)) {
             result = ChatsPage({});
             title = 'Чаты';
+        } else if ('/chats-test'.match(pth)) {
+            namepage = 'ChatsPageTest';
+            title = 'Чаты-тест';
         } else if (routes.profile.match(pth)) {
             namepage = 'ProfilePage';
             title = 'Личность';

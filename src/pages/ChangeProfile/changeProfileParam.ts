@@ -50,7 +50,7 @@ const ChangeProfilePageParam = [
         tag: 'button',
         label: 'изменить личность',
         type: 'submit',
-        class: ['btn__main', 'fs25px']
+        className: ['btn__main', 'fs25px']
     },
     {
         tag: 'a',

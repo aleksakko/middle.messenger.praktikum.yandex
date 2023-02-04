@@ -50,7 +50,7 @@ const RegPageParam = [
         tag: 'button',
         label: 'создать',
         type: 'submit',
-        class: ['btn__main', 'fs35px']
+        className: ['btn__main', 'fs35px']
     },
     {
         tag: 'a',

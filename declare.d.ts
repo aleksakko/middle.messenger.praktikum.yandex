@@ -1,4 +1,5 @@
 declare module "*.ts";
+declare module "*.json";
 declare module "*.scss";
 declare module "*.mytpl";
 declare module '*.hbs' {

@@ -1,15 +1,17 @@
 import template from './sectionWith.hbs';
 import Block from '../../utils/Block';
 import Alink from '../Alink';
+import Textarea from '../Textarea';
+import Button from '../Button';
 
-interface FormProps {
+interface SectionWithProps {
     [key: string]: any;
 }
 
-export default class Form extends Block {
+export default class SectionWith extends Block {
     tmpl: Record<string, Record<string, string>>;
     
-    constructor(props: FormProps) {
+    constructor(props: SectionWithProps) {
         super('section', props);
         this.tmpl = {};
     }
@@ -29,7 +31,7 @@ export default class Form extends Block {
                     label: prop.label,
                     class: prop.class,
                     events: {
-                        click: (e: MouseEvent) => console.log(`clicked`, e.target)
+                        // click: (e: MouseEvent) => console.log(`clicked`, e.target)
                     }
                 })
             }
@@ -39,7 +41,7 @@ export default class Form extends Block {
                     label: prop.label,
                     class: prop.class,
                     events: {
-                        click: (e: MouseEvent) => console.log(`clicked`, e.target)
+                        // click: (e: MouseEvent) => console.log(`clicked`, e.target)
                     }
                 })
             }
@@ -48,9 +50,26 @@ export default class Form extends Block {
                 this.tmpl.labelSpanDown[`span${i}`] = prop.labelSpanDown;
                 this.kids[`span${i++}`] = new Alink({})
             }
+            if (prop.tag === 'textarea') {
+                this.kids[`textarea${i++}`] = new Textarea({
+                    idName: prop.idName,
+                    placeholder: prop.placeholder,
+                    events: prop.events
+                })
+            }
+            if (prop.tag === 'button') {
+                this.kids[`button${i++}`] = new Button({                    
+                    label: prop.label,
+                    type: prop.type,
+                    idName: prop.idName,
+                    className: prop.className,
+                    events: prop.events
+                })
+            }
         });
-        this.element.classList.add(this.props.className);
-        //console.log('init Form');
+        if(this.props.idName) this.element.setAttribute('id', this.props.idName);
+        if(this.props.className) this.element.classList.add(...this.props.className);
+        
     }
     
     render() {   

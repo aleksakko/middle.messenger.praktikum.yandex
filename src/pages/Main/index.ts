@@ -32,6 +32,10 @@ export default class MainPage extends Block {
 
 const alinkInfo = [
     {
+        href: '/chats-test',
+        label: 'чаты-тест' 
+    },
+    {
         href: '/authorization',
         label: 'авторизация' 
     },
