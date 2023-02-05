@@ -63,6 +63,7 @@ export default class Block {
                     return true;
                 } else {
                     const oldTarget = { ...target };
+                    this._removeEvents();
                     target[prop] = value;
                     this.eventBus().emit(Block.EVENTS.FLOW_CDU, oldTarget, target);
                     return true;
@@ -165,11 +166,8 @@ export default class Block {
         //console.log('render Block')
         const block = this.render();
         // Это небезопасный метод для упрощения логики
-        // Используйте шаблонизатор из npm или напишите свой безопасный        
-        // Нужно компилировать не в строку (или делать это правильно),
+        // Используйте шаблонизатор из npm или напишите свой безопасный (пока использую hbs) 
         this._element.innerHTML = '';
-        // либо сразу превращать в DOM-элементы и возвращать из compile DOM-ноду
-        // Удалить старые события через removeEventListener
         this._element.append(block);
         this._addEvents();
     }
@@ -212,7 +210,13 @@ export default class Block {
             this._element.addEventListener( eName, events[eName] );
         });
     }
-        
+    _removeEvents() {
+        const { events = {} } = this.props as { events: Record<string, () => void> };
+
+        Object.keys( events ).forEach(eName => {
+            this._element.removeEventListener( eName, events[eName] );
+        })
+    }        
         
     show() {
         this.getContent().style.display = 'block';

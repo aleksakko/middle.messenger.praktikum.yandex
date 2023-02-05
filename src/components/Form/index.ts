@@ -41,7 +41,7 @@ export default class Form extends Block {
                     events: {
 
                         // ПРЕВАЛИДАЦИЯ У КАЖДОГО ИНПУТА В ФОРМЕ при потере фокуса
-                        blur: (e: MouseEvent) => {
+                        'blur': (e: MouseEvent) => {
                             //console.log(`blured`, e.target);
                             const target = e.target as HTMLInputElement;
                             // passwordCheck сохраняем в замыкании самой формы
