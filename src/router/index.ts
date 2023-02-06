@@ -1,8 +1,5 @@
 import routes from "./routes";
 
-//import mytpl from "../pages/temp/404.mytpl";
-//console.log(mytpl);
-
 import ErrorProps from './errorProps';
 import ErrorPage from '../components/Error';
 import MainPage from '../pages/Main';
@@ -23,7 +20,7 @@ const components: Record<string, any> = {
 export const sessionPages: Record<string, any> = {}; 
 
 const render = (pth: string) => {
-    let result: string | any, // any убрать
+    let result: string | any,
         namepage = '',
         title: string,
         props: any,
@@ -71,6 +68,8 @@ const render = (pth: string) => {
         console.log(error);
     }
     //console.log(typeof result);
+    window.loggg = [];
+
     const app = (<HTMLElement>document.getElementById('app'));
     if (namepage) {
         if (!sessionPages[namepage]) {
@@ -89,6 +88,9 @@ const render = (pth: string) => {
     } else app.innerHTML = result;
     (<HTMLTitleElement>document.getElementsByTagName('title')[0]).textContent = 'SPA ' + title;
     (<HTMLElement>document.getElementById('header-title')).textContent = title;
+
+    // console.log(loggg);
+    // console.log('end record loggg');
 }
 
 const addDom = (pth: string) => {

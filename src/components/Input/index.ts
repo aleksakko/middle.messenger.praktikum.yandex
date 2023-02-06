@@ -6,7 +6,6 @@ type InputProps = Record<string, any>
 export default class Input extends Block {
     constructor(props: InputProps) {
         super('input', props);
-        
         if (this.element instanceof HTMLInputElement) {
             this.element.setAttribute('type', this.props.type);
             this.element.setAttribute('id', this.props.idName);

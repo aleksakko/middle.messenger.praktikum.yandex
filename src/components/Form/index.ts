@@ -13,20 +13,57 @@ export default class Form extends Block {
     tmpl: Record<string, Record<string, string>>;
     
     constructor(props: FormProps) {
+        loggg.push(['Form start constructor'])
         super('form', props);
         this.tmpl = {};
+        loggg.push(['Form end constructor'])
     }
     
     init() {
-        let passwordCheck: string[] = ['', ''];
-
         //console.log('init Form');
+        
         let i = 0;
         this.tmpl = {
             labelfor: {},
             label: {}
         };
         const tmpl = this.tmpl;
+        
+        // массив из двух элементов для сверки пароля и повтора пароля
+        let passwordCheck: string[] = ['', ''];
+        // подписка на событие отправки формы submit
+        // ВАЛИДАЦИЯ И ОТПРАВКА ФОРМЫ (на данный момент выводится в консоль)        
+        this.element.addEventListener(
+            "submit", (e) => {
+                const target = e.target as HTMLButtonElement;                
+                e.preventDefault();
+                const formData: Record<string, string> = {};
+                passwordCheck = ['', ''];
+                let checkForm = true; // если хотя бы один элемент не пройдет валидацию
+
+                Object.keys(tmpl.labelfor).forEach((inputKey) => {
+                    const key = tmpl.labelfor[inputKey],
+                        elemForm = document.getElementById(key) as HTMLInputElement,
+                        value = elemForm.value;
+                    if (elemForm.id === 'password') passwordCheck[0] = target.value;
+                    if (elemForm.id === 'password_repeat') passwordCheck[1] = target.value;
+                    
+                    const resValidate = validateElem(key, value, 'submit', passwordCheck)
+                    if (!resValidate[0]) {                                
+                        elemForm.value = '';
+                        elemForm.classList.add('placeRed');
+                        elemForm.placeholder = resValidate[1] as string;
+                        checkForm = false;
+                    }
+
+                    formData[key] = value;
+                });
+
+                if (checkForm) console.log('Данные для отправки:', '\n', formData)
+                    else console.log('Валидация не пройдена');                
+            }
+        );
+
         const creator = this.props.creator;
         const PageParam = this.props[`${creator}Param`] ? this.props[`${creator}Param`] : undefined;
         if (PageParam) PageParam.forEach((prop: Record<string, any>) => {
@@ -73,37 +110,7 @@ export default class Form extends Block {
                     className: prop.className,
                     events: {
 
-                        // ВАЛИДАЦИЯ И ОТПРАВКА ФОРМЫ (на данный момент выводится в консоль)
-                        click: (e: MouseEvent) => {
-                            const target = e.target as HTMLButtonElement;
-                            if (target.type === 'submit') {
-                                e.preventDefault();
-                                const formData: Record<string, string> = {};
-                                passwordCheck = ['', ''];
-                                let checkForm = true; // если хотя бы один элемент не пройдет валидацию
-
-                                Object.keys(tmpl.labelfor).forEach((inputKey) => {
-                                    const key = tmpl.labelfor[inputKey],
-                                        elemForm = document.getElementById(key) as HTMLInputElement,
-                                        value = elemForm.value;
-                                    if (elemForm.id === 'password') passwordCheck[0] = target.value;
-                                    if (elemForm.id === 'password_repeat') passwordCheck[1] = target.value;
-                                    
-                                    const resValidate = validateElem(key, value, 'submit', passwordCheck)
-                                    if (!resValidate[0]) {                                
-                                        elemForm.value = '';
-                                        elemForm.classList.add('placeRed');
-                                        elemForm.placeholder = resValidate[1] as string;
-                                        checkForm = false;
-                                    }
-
-                                    formData[key] = value;
-                                });
-
-                                if (checkForm) console.log('Данные для отправки:', '\n', formData)
-                                    else console.log('Валидация не пройдена');
-                            }
-                        }
+                        
                     }
                 })
             } else if (prop.tag === 'avaChange') {

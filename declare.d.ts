@@ -9,3 +9,13 @@ declare module '*.hbs' {
 
     export default template;
 }
+
+/* eslint-disable no-var */
+declare var global: any;
+declare var loggg: any;
+declare global {
+    var loggg: any;
+    interface Window {
+        loggg: any;
+    }
+}

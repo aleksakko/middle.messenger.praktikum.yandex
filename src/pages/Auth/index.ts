@@ -8,12 +8,16 @@ interface AuthPageProps {
 }
 export default class AuthPage extends Block {
     constructor(props: AuthPageProps) {
-        //console.log('constructor Reg перед super');       
+        loggg.push(['AuthPage start constructor', 'Auth/index.ts 11']);
+
         super('main', props);
-        //console.log('constructor Reg после super');       
+        
+        loggg.push(['AuthPage start constructor', 'Auth/index.ts 15']);
     }
     
-    init() {   
+    init() { 
+        loggg.push(['AuthPage start init', 'Auth/index.ts 19']);
+        
         //console.log('init Reg');
         this.kids.form = new Form({
             creator: 'AuthPage',
@@ -22,6 +26,8 @@ export default class AuthPage extends Block {
             AuthPageParam: AuthPageParam
         });
         this.element.classList.add('wrap');
+
+        loggg.push(['AuthPage end init', 'Auth/index.ts 29']);
     }
     
     render() {

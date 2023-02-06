@@ -28,6 +28,8 @@ export default class Block {
 
     // START CONSTRUCTOR ---------------------------------
     constructor (tagName = "div", propsAndKids: Props = {}) {
+        loggg.push([tagName, 'start constructor Block']);
+        
         const { props, kids } = this._getKidsAndProps(propsAndKids);
         this._meta = { tagName, props }; // параметры от инстанса
         this.id = randomID(6); // генерируем уникальный id
@@ -43,6 +45,8 @@ export default class Block {
         
         // запуск жизн.цикла с события init
         eventBus.emit(Block.EVENTS.INIT);
+        
+        loggg.push([this.element, 'end constructor Block'])
     }
     // END CONSTRUCTOR ------------------------------------
 
