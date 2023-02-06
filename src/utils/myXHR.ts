@@ -10,6 +10,7 @@ type Options = {
     data?: any;
 }
 type OptionsNoMethod = Omit<Options, 'method'>;
+type HTTPMethod = ( url: string, options?: OptionsNoMethod) => Promise<XMLHttpRequest>
 
 function queryStringify(data: Record<string, unknown>): string {
 	return Object.keys(data)
@@ -18,18 +19,18 @@ function queryStringify(data: Record<string, unknown>): string {
 }
 
 export default class HTTPSender {
-    get(url: string, options: OptionsNoMethod = {}): Promise<XMLHttpRequest>{
-        return this.request(url, {...options, method: METHODS.GET});
-    }
-    post(url: string, options: OptionsNoMethod = {}): Promise<XMLHttpRequest>{
-        return this.request(url, {...options, method: METHODS.POST});
-    }
-    put(url: string, options: OptionsNoMethod = {}): Promise<XMLHttpRequest>{
-        return this.request(url, {...options, method: METHODS.PUT});
-    }
-    delete(url: string, options: OptionsNoMethod = {}): Promise<XMLHttpRequest>{
-        return this.request(url, {...options, method: METHODS.DELETE});
-    }
+    get: HTTPMethod = (url, options = {}) => (
+        this.request(url, {...options, method: METHODS.GET})
+    )
+    post: HTTPMethod = (url, options = {}) => (
+        this.request(url, {...options, method: METHODS.POST})
+    )
+    put: HTTPMethod = (url, options = {}) => (
+        this.request(url, {...options, method: METHODS.PUT})
+    )    
+    delete: HTTPMethod = (url, options = {}) => (
+        this.request(url, {...options, method: METHODS.DELETE})
+    )    
 
     request(url: string, options: Options = { method: METHODS.GET }, timeout = 5000): Promise<XMLHttpRequest> {
         const { method, data } = options;
