@@ -1,0 +1,10 @@
+{{!-- <h1>{{ title }}</h1> --}}
+<nav class="wrap__main-page"><ul>
+{{#with this}}
+  {{#each this}}   
+    {{#if (startsWith @key "alink")}}
+      <li>{{{this}}}</li>
+    {{/if}}   
+  {{/each}}
+{{/with}}
+</ul></nav>

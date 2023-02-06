@@ -1,23 +1,35 @@
 @import "./styles/normalize8.0.1.css";
-@import "./styles/mixins.scss";
-
+@import "./styles/mixins";
 @include font-face("Furore", "../static/fonts/Furore-webfont");
+@include font-face("PTMonoBold", "../static/fonts/PTM75F_W");
+@include font-face("PTMonoRegular", "../static/fonts/PTM55F_W");
 
-$colLight: rgb(238, 227, 179);
-$colShadow: rgb(56, 6, 80);
-$colShadow50: rgba(56, 6, 80, 0.5);
-$colShadow80: rgba(56, 6, 80, 0.8);
-$colShadow90: rgba(56, 6, 80, 0.9);
-$colShadowDark: rgb(51, 3, 73);
-$sizeAva: 100px;
+$col-light: rgb(238 227 179);
+$col-shadow: rgb(56 6 80);
+$col-shadow10: rgba(56 6 80 / 10%);
+$col-shadow20: rgba(56 6 80 / 20%);
+$col-shadow30: rgba(56 6 80 / 30%);
+$col-shadow50: rgba(56 6 80 / 50%);
+$col-shadow80: rgba(56 6 80 / 80%);
+$col-shadow90: rgba(56 6 80 / 90%);
+$col-shadow-dark: rgb(51 3 73);
+$col-error-red: rgb(145 0 36);
+$size-ava: 100px;
 
+// рабочие классы для JS -------------
+
+.hidden {
+    display: none !important;
+}
+
+// -----------------------------------
 
 body {
     margin: 0;
     padding: 10px;
-    font-family: "Furore", Arial, Helvetica, sans-serif;
-    background-color: $colShadow;
-    color: $colLight;
+    font-family: Furore, Arial, Helvetica, sans-serif;
+    background-color: $col-shadow;
+    color: $col-light;
 }
 
 header {
@@ -26,43 +38,62 @@ header {
         width: 60px;
         line-height: 25px;
         text-align: center;
-        color: $colLight;
-        border: 1px solid $colLight;    
+        color: $col-light;
+        border: 1px solid $col-light;
         font-size: 26px;
     }
+
     h2 {
         padding-left: 70px;
     }
 }
+
 #app {
     height: 85vh;
-    background-color: $colLight;
-    color: $colShadow;
+    background-color: $col-light;
+    color: $col-shadow;
 }
+
 input {
-    cursor: text;    
-    font-family: "Furore", sans-serif;
-    border: 1px solid $colShadow;
+    cursor: text;
+    font-family: PTMonoBold, sans-serif;
+    color: $col-shadow-dark;
+    width: 16em;
+    border: 1px solid $col-shadow;
     border-radius: 2px;
-    &:focus {                
-        border: 2px solid $colShadow;
+
+    &:focus {
+        border: 2px solid $col-shadow;
         border-radius: 3px;
         outline: 0;
     }
+
     // стили placeholder добавлены для экспериментов с дизайном
     &::placeholder {
-        color: $colShadow90;
-        font-size: 15px;
+        color: $col-shadow90;
+        font-size: 14px;
     }
-    &:focus::placeholder{
+
+    &.place-red::placeholder {
+        font-family: Furore, sans-serif;
+        color: $col-error-red;
+        font-size: 11px;
+    }
+
+    &:focus::placeholder {
         color: transparent;
     }
-}  
-label, button, a { 
-    cursor: crosshair; 
 }
-a {
+
+body a,
+label,
+button {
+    cursor: crosshair;
+}
+
+body a {
     text-decoration: none;
+
     &:hover {
         font-weight: bold;
     }
@@ -72,19 +103,25 @@ a {
     display: flex;
     height: 100%;
 }
+
 .wrap > .wrap__main-page {
     margin: auto;
 }
+
 .error-cont {
     height: 200px;
     margin: auto;
     text-align: center;
+
     .error-cont__digit {
         padding: 0 10px 10px;
-        @include bg-repeat(-45deg, transparent, $colShadow80, 5);
+
+        @include bg-repeat(-45deg, transparent, $col-shadow80, 5, 5);
         @include text-shadow(white);
+
         font-size: 120px;
     }
+
     span {
         font-size: 35px;
         font-weight: bold;
@@ -96,41 +133,53 @@ a {
         display: flex;
         flex-direction: column;
         align-items: center;
+
     h2 {
         font-size: 35px;
     }
+
     h3 {
         font-size: 25px;
     }
+
     &__field {
         display: flex;
         flex-direction: column;
-    
+
         label {
             order: 0;
         }
+
         input {
             order: 1;
-            &:hover + label, &:focus + label {
+
+            &:hover + label,
+ &:focus + label {
                 font-weight: bold;
-            }      
+            }
         }
     }
+
     button.btn__main {
-        font-family: inherit;        
+        font-family: inherit;
         &.fs35px { font-size: 35px; }
         &.fs25px { font-size: 25px; }
-        color: $colShadow;
-        @include bg-repeat(-45deg, transparent, $colShadow80, 3);
+
+        color: $col-shadow;
+
+        @include bg-repeat(-45deg, transparent, $col-shadow80, 3, 3);
         @include text-shadow(white);
+
         font-weight: bold;
         margin-top: 10px;
         padding: 4px 10px 0;
         border: none;
         border-radius: 3px;
+
         &:hover {
-            color: $colShadowDark;
-            @include bg-repeat(-45deg, transparent, $colShadow80, 3.4);
+            color: $col-shadow-dark;
+
+            @include bg-repeat(-45deg, transparent, $col-shadow80, 7, 7);
         }
     }
 }
@@ -140,7 +189,7 @@ a {
     display: flex;
     flex-direction: column;
     align-items: center;
-    
+
     &__field {
         display: flex;
         flex-direction: column;
@@ -156,23 +205,26 @@ a {
     }
 }
 
-.avatar {
-    width: $sizeAva;
-    height: $sizeAva;
+body .avatar {
+    width: $size-ava;
+    height: $size-ava;
     margin-bottom: 20px;
     background: center no-repeat url("../static/img/ava.png");
-    line-height: $sizeAva;
+    line-height: $size-ava;
     text-align: center;
+
     & > a {
         visibility: hidden;
         position: absolute;
         display: block;
-        width: $sizeAva;
-        height: $sizeAva;            
-        color: $colShadow;
-        @include text-shadow($colLight);
-        @include bg-repeat(-45deg, transparent, $colShadow50, 9);    
-    }    
+        width: $size-ava;
+        height: $size-ava;
+        color: $col-shadow;
+
+        @include text-shadow($col-light);
+        @include bg-repeat(-45deg, transparent, $col-shadow30, 8, 8);
+    }
+
     &:hover > a {
         visibility: visible;
         cursor: crosshair;
@@ -189,88 +241,168 @@ a {
     .chats-column {
         display: flex;
         flex-direction: column;
-        border-right: 2px solid $colShadow;
+        border-right: 2px solid $col-shadow;
+        padding-right: 0;
+
         .chats-column__profile {
             display: flex;
             height: 70px;
             flex-direction: row;
-            border-bottom: 2px solid $colShadow;
+            border-bottom: 2px solid $col-shadow;
+
             .avatar {
                 width: 70px;
                 height: 70px;
                 background-size: 70px;
+
                 & > a {
                     width: 70px;
                     height: 70px;
                 }
             }
+
             input {
                 background: center no-repeat url("../static/img/search.png");
+                font-family: Furore, sans-serif;
                 background-position-x: 28px;
                 height: 70px;
                 background-color: transparent;
                 cursor: crosshair;
                 border: none;
+
                 &::placeholder {
                     text-align: center;
                 }
+
                 &:hover::placeholder {
                     font-weight: bold;
                 }
+
                 &:focus {
                     background: none;
-                }                
+                }
             }
         }
-        .chats-column__chats {
-            display: flex;
-            flex-direction: column;
-            list-style: none;
-            padding: 0;
-            margin: 5px 0 5px 5px;            
 
-            li {                
+        .chats-column__chats {
+            // возможно font-family: "PTMonoBold", sans-serif;
+            padding: 0;
+            margin: 0;
+            overflow: hidden;
+
+            @include bg-repeat(-45deg, transparent, $col-shadow20, 10, 10);
+
+            ul {
+                display: flex;
+                flex-direction: column;
+                list-style: none;
+                margin: 0;
+                padding: 0;
+            }
+
+            li {
                 display: flex;
                 flex-direction: row;
-                width: 100%;
-                border-bottom: 1px solid $colShadow;
+                width: 98%;
+                margin: 0 auto;
+                border-bottom: 1px solid $col-shadow;
+
                 .ava-chat {
                     width: 50px;
                     height: 50px;
-                    margin: 3px 3px 3px 0;                
+                    margin: 4px;
                     background: center no-repeat url("../static/img/user1.png");
-                    border: 1px solid $colShadow;
+                    border: 1px solid $col-shadow;
+                    background-color: $col-light;
                 }
+
+                .about {
+                    padding: 1px 1px 0 0;
+
+                    span {
+                        background-color: $col-light;
+                        display: inline-block;
+                        border: 1px solid $col-shadow;
+                    }
+                }
+
                 .short-info {
                     display: flex;
                     flex: 1;
                     flex-direction: column;
-                    & span:first-child:hover {
-                        font-weight: bold;
-                    }
+
                     & span:last-child {
                         font-size: 12px;
                     }
                 }
-                .about {
-                    padding: 1px 1px 0 0;
-                    span {
-                        display: inline-block;
-                        border: 1px solid $colShadow;
+
+                &:hover {
+                    background-color: $col-light;
+                    cursor: crosshair;
+
+                    .short-info span:first-child {
+                        font-weight: bold;
                     }
                 }
             }
         }
     }
+
     .chat-cont {
         width: 100%;
         display: flex;
+        flex-direction: column;
+
         div {
             margin: auto;
             text-align: center;
         }
-        h1, h4 {
+
+        h1,
+ h4 {
             margin: 0;
+        }
+
+        .write-message-cont {
+            display: flex;
+            flex-direction: row;
+            padding: 4px;
+            height: 58px;
+
+            & > #message {
+                resize: none;
+                width: 100%;
+                border: 1px solid $col-shadow80;
+                color: $col-shadow-dark;
+                overflow-y: inherit;
+                font-size: 14px;
+                margin-right: 4px;
+                background-color: transparent;
+                border-radius: 2px;
+
+                &:hover {
+                    border: 2px solid $col-shadow80;
+                }
+            }
+
+            & > button {
+                font-family: inherit;
+                color: $col-shadow;
+
+                @include bg-repeat(-45deg, transparent, $col-shadow50, 5, 5);
+                @include text-shadow(white);
+
+                padding: 4px 10px 0;
+                font-weight: bold;
+                border: none;
+                border-radius: 3px;
+
+                &:hover {
+                    color: $col-shadow-dark;
+
+                    @include bg-repeat(-45deg, transparent, $col-shadow80, 7, 7);
+                }
+            }
         }
     }
 }

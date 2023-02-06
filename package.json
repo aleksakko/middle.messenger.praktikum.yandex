@@ -11,9 +11,11 @@
   },
   "type": "module",
   "scripts": {
-    "start": "node server.js",
-    "dev": "parcel index.html --dist-dir dist/dev --open",
-    "build": "parcel build index.html"
+    "start": "node server.js --open",
+    "dev": "parcel ./src/index.html --dist-dir dist/dev --open --port 3333",
+    "build": "parcel build ./src/index.html",
+    "lint": "eslint .",
+    "stylelint": "stylelint '**/*.scss'"
   },
   "repository": {
     "type": "git",
@@ -29,8 +31,14 @@
     "express": "4.18.2"
   },
   "devDependencies": {
-    "@parcel/transformer-sass": "2.8.2",
-    "parcel": "2.8.2",
-    "parcel-transformer-hbs": "1.0.4"
+    "@parcel/transformer-sass": "2.8.3",
+    "parcel": "2.8.3",
+    "parcel-transformer-hbs": "1.0.4",
+    "typescript": "^4.9.5",    
+    "@typescript-eslint/eslint-plugin": "^5.50.0",
+    "eslint": "^8.33.0",
+    "eslint-plugin-import": "^2.27.5",
+    "stylelint": "^14.16.1",
+    "stylelint-config-standard-scss": "^6.1.0"
   }
 }
