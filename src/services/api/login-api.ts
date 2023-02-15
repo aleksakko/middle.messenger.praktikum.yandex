@@ -1,0 +1,20 @@
+import HTTPSender from "../HTTP";
+import BaseAPI from "./base-api";
+
+const authAPIInstance = new HTTPSender('api/v1/chats');
+
+class ChatAPI extends BaseAPI {
+
+    create() {
+        // Здесь уже не нужно писать полный путь /api/v1/chats/// Здесь уже не нужно писать полный путь /api/v1/chats/
+        return authAPIInstance.post('/', { title: 'string' })
+            .then({user: {info}} => info);
+    }
+
+    request() {
+        // Здесь уже не нужно писать полный путь /api/v1/chats/// Здесь уже не нужно писать полный путь /api/v1/chats/
+        return authAPIInstance.post<LoginRequest, LoginResponse>('/login', user)
+            .then(({user_id}) => user_id); // обрабатываем получение данных из сервиса далее
+    }
+
+}

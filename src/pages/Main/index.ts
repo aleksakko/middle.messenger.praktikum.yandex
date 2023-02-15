@@ -17,7 +17,7 @@ export default class MainPage extends Block {
                 href: prop.href,
                 label: prop.label,
                 events: {
-                    click: (e: MouseEvent) => console.log(`clicked`, e.target)
+                    //click: (e: MouseEvent) => console.log(`clicked`, e.target)
                 }
             })
         });

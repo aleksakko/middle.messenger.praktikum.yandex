@@ -33,3 +33,6 @@ export default class EventBus {
         });
     }
 }
+
+const EventBusGlobal = new EventBus();
+export { EventBusGlobal };

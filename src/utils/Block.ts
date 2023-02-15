@@ -223,11 +223,12 @@ export default class Block {
     }        
         
     show() {
-        this.getContent().style.display = 'block';
+
+        this.element.classList.remove('hidden');
     }
     
     hide() {
-        this.getContent().style.display = 'none';
+        this.element.classList.add('hidden');
     }
         getContent() {
             return this.element;

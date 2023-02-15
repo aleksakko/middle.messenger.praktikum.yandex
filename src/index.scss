@@ -154,7 +154,7 @@ body a {
             order: 1;
 
             &:hover + label,
- &:focus + label {
+            &:focus + label {
                 font-weight: bold;
             }
         }

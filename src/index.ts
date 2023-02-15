@@ -1,8 +1,11 @@
 import './index.scss';
-import goRouter from './router';
 
 // создано несколько хелперов для handlebars
 import './utils/handlebarsHelpers.ts';
 
+// старый роутер
+// import goRouter from './router';
+//goRouter();
 
-goRouter();
+import router from './services/router/Router';
+router.start();

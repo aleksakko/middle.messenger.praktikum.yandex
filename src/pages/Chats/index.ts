@@ -47,31 +47,32 @@ export default class ChatsPage extends Block {
             UsersDataId.push(user.id);
         })
         
+        this.dataManipulate();
+
         this.kids.chatsList = new NavList({
             classNav: 'chats-column__chats',
             creator: 'Chats',
             chatsFieldData: UsersDataCompile,
             usersDataId: UsersDataId,
             parentBus: this.eventBus(), // передача EventBus'a с подписками родителя            
-        });
+        })
 
-        this.dataManipulate();
-
-
-        this.kids.writeMessageCont= new SectionWith({
+        this.kids.writeMessageCont = new SectionWith({
             className: ['write-message-cont', 'hidden'],
             creator: 'ChatsPage',
             ChatsPageParam: [
                 {
                     tag: 'textarea',
                     idName: 'message',
+                    value: '',
                     events: {
                         'keydown': (e: KeyboardEvent) => {
                             if (e.key === 'Enter' && !e.shiftKey) {
+                                e.preventDefault();
                                 const target = e.target as HTMLTextAreaElement;
                                 const resValidate = validateElem('message', target.value)
                                 console.log(resValidate);
-                                if (!resValidate[0]) console.log('Игнорирование')
+                                if (!resValidate[0]) console.log('Игнорирование отправки')
                                     else console.log('Отправлено в открытый чат:', '\n', target.value);
                                 target.value = '';
                             }

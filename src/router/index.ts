@@ -1,6 +1,7 @@
 import routes from "./routes";
 
 import ErrorProps from './errorProps';
+
 import ErrorPage from '../components/Error';
 import MainPage from '../pages/Main';
 import AuthPage from "../pages/Auth";
@@ -9,6 +10,7 @@ import ChatsPage from "../pages/Chats";
 import ProfilePage from "../pages/Profile";
 import ChangeProfPage from "../pages/ChangeProfile";
 import ChangePassPage from "../pages/ChangePass";
+
 
 // объект с конструкторами-компонентов
 const components: Record<string, any> = {
@@ -20,8 +22,7 @@ const components: Record<string, any> = {
 export const sessionPages: Record<string, any> = {}; 
 
 const render = (pth: string) => {
-    let result: string | any,
-        namepage = '',
+    let namepage = '',
         title: string,
         props: any,
         keyError: Record<string, string | number> = {};
@@ -60,6 +61,7 @@ const render = (pth: string) => {
             namepage = 'ErrorPage404';
             keyError = ErrorProps['404'];
             title = '404';
+            console.log('я здесь');
         }
     } catch (error) {
         namepage = 'ErrorPage500';
@@ -71,21 +73,20 @@ const render = (pth: string) => {
     window.loggg = [];
 
     const app = (<HTMLElement>document.getElementById('app'));
-    if (namepage) {
         if (!sessionPages[namepage]) {
             if (keyError.href) {
                 //console.log(namepage, keyError.href)
-                sessionPages[namepage] = new components['ErrorPage'](keyError);
+                sessionPages[namepage] = new components.ErrorPage(keyError);
             } else {
                 //console.log(namepage);
                 sessionPages[namepage] = new components[namepage](props);
             }
         }
         // console.log(sessionPages);
-        result = sessionPages[namepage];
+        const result = sessionPages[namepage];
         app.innerHTML = ''; 
+        // console.log('result: ',result);
         app.append(result.getContent());
-    } else app.innerHTML = result;
     (<HTMLTitleElement>document.getElementsByTagName('title')[0]).textContent = 'SPA ' + title;
     (<HTMLElement>document.getElementById('header-title')).textContent = title;
 
@@ -102,6 +103,7 @@ const goRouter = () => {
     render(window.location.pathname);
 
     window.addEventListener('popstate', () => {
+        console.log('pop');
         render(window.location.pathname);
     })
 
