@@ -1,6 +1,7 @@
 
 import EventBus from './EventBus';
 import randomID from './randomID';
+import { merge } from './set';
 
 type Props = Record<string, any>
 
@@ -53,6 +54,7 @@ export default class Block {
     // функция Proxi-обёртки для пропсов
     _makePropsProxy(props: Props) {
         const proxyProps = new Proxy(props, {
+            
             get(target: Props, prop: string) {
                 if (prop[0] === '_') {
                     throw new Error('Нет доступа');
@@ -60,12 +62,15 @@ export default class Block {
                 const value = target[prop];
                 return typeof value === 'function' ? value.bind(target) : value;
             },
+            
             set:(target: Props, prop: string, value) => {
                 if (prop[0] === '_') {
                     throw new Error('Нет доступа');
                 } else if (target[prop] === value) {
+                    //console.log(target[prop], value);
                     return true;
                 } else {
+                    //console.log(target[prop], value);
                     const oldTarget = { ...target };
                     this._removeEvents();
                     target[prop] = value;
@@ -73,6 +78,7 @@ export default class Block {
                     return true;
                 }
             },
+            
             deleteProperty(target: Props, prop: string) {
                 if (prop[0] === '_') {
                     throw new Error('Нет доступа');
@@ -151,6 +157,8 @@ export default class Block {
         if (this.componentDidUpdate(oldProps, newProps)) {
             console.log(`CD_Update render ${this.element}`, newProps);
             this.eventBus().emit(Block.EVENTS.FLOW_RENDER);
+        } else {
+            console.log(`Отмена CD_Update render ${this.element}`, newProps);
         }
     }
     // Переопределяется пользователем.
@@ -163,7 +171,13 @@ export default class Block {
             return;
         }
 
-        Object.assign(this.props, nextProps);
+        const { props, kids } = this._getKidsAndProps(nextProps);
+
+        if (Object.values(kids).length)
+            merge(this.kids, kids);
+        
+        if (Object.values(props).length)
+            merge(this.props, nextProps);
     }
     
     private _render() {
@@ -194,7 +208,6 @@ export default class Block {
         const temp = document.createElement('template');
 
         temp.innerHTML = html;
-        
         // замена заглушек обратно на элементы
         Object.entries(this.kids).forEach(([, component]) => {
             const stub = temp.content.querySelector(`[data-id="${component.id}"]`);

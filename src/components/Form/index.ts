@@ -5,22 +5,24 @@ import Input from '../Input';
 import Button from '../Button';
 import Alink from '../Alink';
 
+// !!!
+import AuthController from '../../services/controllers/AuthController';
+import UsersController from '../../services/controllers/UsersController';
+
 interface FormProps {
-    [key: string]: any;
+    [key: string]: unknown;
 }
 
 export default class Form extends Block {
-    tmpl: Record<string, Record<string, string>>;
+    tmpl!: Record<string, Record<string, string>>;
+    creator!: string;
     
     constructor(props: FormProps) {
-        loggg.push(['Form start constructor'])
         super('form', props);
-        this.tmpl = {};
-        loggg.push(['Form end constructor'])
     }
     
     init() {
-        //console.log('init Form');
+        this.creator = this.props.creator;
         
         let i = 0;
         this.tmpl = {
@@ -35,9 +37,9 @@ export default class Form extends Block {
         // ВАЛИДАЦИЯ И ОТПРАВКА ФОРМЫ (на данный момент выводится в консоль)        
         this.element.addEventListener(
             "submit", (e) => {
-                const target = e.target as HTMLButtonElement;                
+                //const target = e.target as HTMLFormElement; 
                 e.preventDefault();
-                const formData: Record<string, string> = {};
+                const formData: Record<string, any> = {};
                 passwordCheck = ['', ''];
                 let checkForm = true; // если хотя бы один элемент не пройдет валидацию
 
@@ -45,8 +47,8 @@ export default class Form extends Block {
                     const key = tmpl.labelfor[inputKey],
                         elemForm = document.getElementById(key) as HTMLInputElement,
                         value = elemForm.value;
-                    if (elemForm.id === 'password') passwordCheck[0] = target.value;
-                    if (elemForm.id === 'password_repeat') passwordCheck[1] = target.value;
+                    if (elemForm.id === 'password') passwordCheck[0] = value;
+                    if (elemForm.id === 'password_repeat') passwordCheck[1] = value;
                     
                     const resValidate = validateElem(key, value, 'submit', passwordCheck)
                     if (!resValidate[0]) {                                
@@ -59,13 +61,39 @@ export default class Form extends Block {
                     formData[key] = value;
                 });
 
-                if (checkForm) console.log('Данные для отправки:', '\n', formData)
-                    else console.log('Валидация не пройдена');                
+                if (checkForm) {
+                    console.log('Данные для отправки:', '\n', formData);
+                    
+                    // api часть формы
+                    switch (this.creator) {
+                        case 'AuthPage': {
+                            AuthController.signin(formData as apiSigninData);
+                            break;
+                        }
+                        case 'RegPage': {
+                            console.log('Запускаем регистрацию - RegPage');
+                            AuthController.signup(formData as apiSignupData);
+                            break;
+                        }
+                        case 'ChangeProfilePage': {
+                            console.log('Запускаем изменение профиля = ChangeProfilePage');
+                            UsersController.setProf(formData as apiSignupData);
+                            break;
+                        }
+                        case 'ChangePassPage': {
+                            console.log('Запускаем изменение профиля = ChangeProfilePage');
+                            UsersController.setPass(formData as apiPass);
+                            break;
+                        }
+                    }
+                } else {
+                    console.log('Валидация не пройдена');
+                    console.log('Данные для отправки:', '\n', formData);
+                }
             }
         );
 
-        const creator = this.props.creator;
-        const PageParam = this.props[`${creator}Param`] ? this.props[`${creator}Param`] : undefined;
+        const PageParam = this.props[`${this.creator}Param`] ? this.props[`${this.creator}Param`] : undefined;
         if (PageParam) PageParam.forEach((prop: Record<string, any>) => {
             if (prop.tag === 'input') {
                 this.tmpl.labelfor[`input${i}`] = prop.idName;
@@ -99,6 +127,7 @@ export default class Form extends Block {
                     href: prop.href,
                     label: prop.label,
                     class: prop.class,
+                    dataApi: prop.dataApi,
                     events: {
                         //click: (e: MouseEvent) => console.log(`clicked`, e.target)
                     }
@@ -109,8 +138,7 @@ export default class Form extends Block {
                     type: prop.type,
                     className: prop.className,
                     events: {
-
-                        
+                        //click: (e: MouseEvent) => console.log(`clicked`, e.target)
                     }
                 })
             } else if (prop.tag === 'avaChange') {
@@ -118,6 +146,7 @@ export default class Form extends Block {
                     href: prop.href,
                     label: prop.label,
                     class: prop.class,
+                    dataApi: prop.dataApi,
                     events: {
                         //click: (e: MouseEvent) => console.log(`clicked`, e.target)
                     }
@@ -136,11 +165,9 @@ export default class Form extends Block {
             }
         });
         this.element.classList.add('form-cont');
-        //console.log('end init Form');
     }
     
     render() {   
-        //console.log('start render Form');
         return this.compile(template, { 
             title: this.props.title, 
             titletag: this.props.titletag,

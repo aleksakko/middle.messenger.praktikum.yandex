@@ -54,7 +54,7 @@ const RegPageParam = [
     },
     {
         tag: 'a',
-        href: '/authorization',
+        href: '/',
         label: 'войти'
     }
 ];

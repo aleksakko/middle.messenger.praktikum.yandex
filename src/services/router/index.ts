@@ -11,9 +11,19 @@ import ErrorPage from "../../components/Error"
 
 import Block from "../../utils/Block";
 import Route from "./Route";
+import withStore from "../withStore";
 
-
-
+export enum Routes {
+    Main = '/test',
+    Auth = '/',
+    Reg = '/sign-up',
+    Messenger = '/messenger',
+    Profile = '/profile',
+    ChangeProfile = '/settings',
+    ChangePassword = '/change-password',
+    Error500 = '/error-500',
+    Error404 = '/error-404'
+}
 class Router {
     static __INSTANCE: Router;
     
@@ -41,21 +51,21 @@ class Router {
             const target = e.target as HTMLAnchorElement;
             if (target.tagName === 'A') {
                 e.preventDefault();
-                this.go(target.pathname);
-                console.log(e.target);
+                if (!target.getAttribute('data-api')) this.go(target.pathname);
+                // console.log('data-api is ', target.getAttribute('data-api'));
             }
         }, true)
     }
     // END CONSTRUCTOR ----------------------------------------------
 
     // инициализация рутов. 2 обязательных параметра, props и rootQuery не обязательно
-    use(
+    public use(
         path: string, // !
-        blockClass: new (Props?: any) => Block, // ! 
-        props: Record<string, any> = {}, // ? или указанные пропсы
-        rootQuery = this._rootQuery // ? или указанный query нужного элемента
+        blockClass: new (props?: any) => Block, // ! 
+        propsAndTitle: Record<string, any> = {}, // ? или указанные пропсы
+        rootQuery = this._rootQuery, // ? или указанный query нужного элемента
     ){
-        const route = new Route(path, blockClass, props, rootQuery);
+        const route = new Route(path, blockClass, propsAndTitle, rootQuery);
 
         this.routes.push(route);
         
@@ -63,7 +73,7 @@ class Router {
     }
 
     // подписка на изменение истории и инициализация текущего пути (первый запуск '/')
-    start() {
+    public start() {
         window.onpopstate = (() => {
             this._onRoute(window.location.pathname);
         }).bind(this);
@@ -72,52 +82,56 @@ class Router {
     }
 
     // изменение истории и переход на /path
-    go(path: string) {
+    public go(path: string) {
         this.history.pushState({}, "", path);
         this._onRoute(path);
     }
 
     // логика перехода на /path
-    _onRoute(path: string) {
-        console.log(path);
+    private _onRoute(path: string) {
+        //console.log(path);
         let route = this.getRoute(path);
         
         if (!route) {
-            route = this.getRoute('/error-404');
+            route = this.getRoute(Routes.Error404);
             if (!route) return;
         }
 
         if (this._currentRoute) {
-            console.log('this._currentRoute: ' + this._currentRoute)
-            this._currentRoute.leave();
+            //console.log('this._currentRoute: ' + this._currentRoute)
+            // this._currentRoute.leave(); - если активно то блок висит в DOM
         }
 
         this._currentRoute = route;
         route.render();
     }
 
-    getRoute(path: string) {
+    private getRoute(path: string) {
         return this.routes.find(route => route.match(path));
     }
+    
+    public back() { this.history.back(); }
 
-    back() { this.history.back(); }
-
-    forward() { this.history.forward(); }
+    public forward() { this.history.forward(); }
 }
-
-
 
 const router = new Router('#app');
 
 router
-    .use('/', MainPage)
-    .use('/authorization', AuthPage)
-    .use('/registration', RegPage)
-    .use('/list-of-chats', ChatsPage)
-    .use('/profile', ProfilePage)
-    .use('/change-profile', ChangeProfilePage)
-    .use('/change-password', ChangePassPage)
-    .use('/error-500', ErrorPage, ErrorProps['500'])
-    .use('/error-404', ErrorPage, ErrorProps['404'])
+    .use(Routes.Main, MainPage, { title: 'messenger' })
+    .use(Routes.Auth, AuthPage, { title: 'Авторизация' })
+    .use(Routes.Reg, RegPage, { title: 'Регистрация' })
+    .use(Routes.Messenger, ChatsPage, { title: 'Чаты' })
+    .use(Routes.Profile, ProfilePage, { title: 'Личность' })
+    .use(Routes.ChangeProfile, ChangeProfilePage, { title: 'Изменение личности' })
+    .use(Routes.ChangePassword, ChangePassPage, { title: 'Изменение пароля' })
+    .use(Routes.Error500, ErrorPage, { 
+        title: '500',
+        props: ErrorProps['500']
+    })
+    .use(Routes.Error404, ErrorPage, { 
+        title: '404',
+        props: ErrorProps['404']
+    })
 
     export default router; // экспортируем инстанс Роутера как синглтон

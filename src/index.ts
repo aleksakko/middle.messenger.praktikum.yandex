@@ -7,5 +7,16 @@ import './utils/handlebarsHelpers.ts';
 // import goRouter from './router';
 //goRouter();
 
-import router from './services/router/Router';
-router.start();
+import AuthController from './services/controllers/AuthController';
+import router from './services/router';
+
+window.addEventListener('DOMContentLoaded', async () => {
+    try {
+        await AuthController.getUser();
+
+        router.start();
+    } catch (err) {
+        router.start();
+    }
+})
+

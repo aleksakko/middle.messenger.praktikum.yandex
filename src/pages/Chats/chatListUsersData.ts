@@ -46,7 +46,7 @@ const ChatListUsersData = [
         nickname: 'oHayour',
         partchat: 'спокойной ночи',
         about: null
-    },
+    }
     
 ];
 export default ChatListUsersData;

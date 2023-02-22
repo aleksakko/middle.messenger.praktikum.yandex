@@ -16,20 +16,15 @@ $col-shadow-dark: rgb(51 3 73);
 $col-error-red: rgb(145 0 36);
 $size-ava: 100px;
 
-// рабочие классы для JS -------------
-
-.hidden {
-    display: none !important;
-}
-
-// -----------------------------------
-
 body {
     margin: 0;
     padding: 10px;
     font-family: Furore, Arial, Helvetica, sans-serif;
     background-color: $col-shadow;
     color: $col-light;
+    height: 100vh;
+    overflow-y: hidden;
+    overflow-x: auto;
 }
 
 header {
@@ -212,22 +207,38 @@ body .avatar {
     background: center no-repeat url("../static/img/ava.png");
     line-height: $size-ava;
     text-align: center;
+    border: 1px solid $col-shadow50;
 
     & > a {
         visibility: hidden;
-        position: absolute;
+        position: relative;
         display: block;
-        width: $size-ava;
-        height: $size-ava;
+        width: calc($size-ava - 2px);
+        height: calc($size-ava - 2px);
         color: $col-shadow;
 
         @include text-shadow($col-light);
-        @include bg-repeat(-45deg, transparent, $col-shadow30, 8, 8);
     }
 
     &:hover > a {
         visibility: visible;
         cursor: crosshair;
+
+        @include bg-repeat(-45deg, transparent, $col-shadow30, 5, 3.75);
+    }
+
+    .modal-avatar {
+        visibility: visible;
+        border: 150vh solid rgba(40 40 80 / 0%);
+        margin-left: calc(-150vh + 1px);
+        margin-top: calc(-150vh + 1px);
+        background-clip: padding-box;
+
+        @include bg-repeat(-45deg, transparent, $col-shadow30, 5, 3.75);
+    }
+
+    &:hover > .modal-avatar {
+        @include bg-repeat(-45deg, transparent, $col-shadow30, 5, 3.75);
     }
 }
 
@@ -261,7 +272,7 @@ body .avatar {
                 }
             }
 
-            input {
+            #search {
                 background: center no-repeat url("../static/img/search.png");
                 font-family: Furore, sans-serif;
                 background-position-x: 28px;
@@ -288,7 +299,10 @@ body .avatar {
             // возможно font-family: "PTMonoBold", sans-serif;
             padding: 0;
             margin: 0;
-            overflow: hidden;
+            overflow-y: auto;
+
+            // width: 70px;
+            // overflow-x: hidden;
 
             @include bg-repeat(-45deg, transparent, $col-shadow20, 10, 10);
 
@@ -331,7 +345,7 @@ body .avatar {
                     flex: 1;
                     flex-direction: column;
 
-                    & span:last-child {
+                    & > span:last-child {
                         font-size: 12px;
                     }
                 }
@@ -352,14 +366,38 @@ body .avatar {
         width: 100%;
         display: flex;
         flex-direction: column;
+        height: 85vh;
 
-        div {
+        .stub-chat {
             margin: auto;
             text-align: center;
         }
 
+        .this-chat {
+            display: flex;
+            flex-direction: column;
+            text-align: right;
+            height: calc(85vh - 58px);
+            width: 100%;
+            overflow-y: auto;
+            overflow-x: hidden;
+
+            // word-break: break-all;
+            border-top: 3px solid $col-light;
+
+            .msg {
+                margin: 0 10px 5px;
+            }
+
+            // этот класс нужно доработать (выравнивание по разным сторонам)
+            .left {
+                display: block;
+                align-self: flex-end;
+            }
+        }
+
         h1,
- h4 {
+        h4 {
             margin: 0;
         }
 
@@ -406,3 +444,25 @@ body .avatar {
         }
     }
 }
+
+// рабочие классы для JS -------------
+
+.hidden {
+    display: none !important;
+}
+
+.hidden-vis {
+    visibility: hidden !important;
+}
+
+.modal {
+    position: absolute;
+    margin: calc($size-ava + 50px) auto auto;
+    z-index: 1;
+    width: calc($size-ava * 3.3);
+    height: calc($size-ava * 2);
+    background: $col-light;
+    border: 5px solid $col-shadow-dark;
+}
+
+// -----------------------------------

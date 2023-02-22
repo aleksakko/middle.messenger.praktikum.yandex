@@ -2,6 +2,7 @@ import template from './changePass.hbs';
 import Block from '../../utils/Block';
 import Form from '../../components/Form';
 import ChangePassPageParam from './changePassParam';
+import isEqual from '../../utils/isEqual';
 
 interface ChangePassPageProps {
     [key: string]: string;

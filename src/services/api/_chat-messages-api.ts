@@ -1,5 +1,5 @@
-import HTTPSender from "../HTTP";
-import BaseAPI from "./base-api";
+import HTTPSender from "../../utils/HTTPTransport";
+import BaseAPI from "./BaseAPI";
 
 const chatMessagesAPIInstance = new HTTPSender('api/v1/messages');
 

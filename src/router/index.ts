@@ -61,7 +61,6 @@ const render = (pth: string) => {
             namepage = 'ErrorPage404';
             keyError = ErrorProps['404'];
             title = '404';
-            console.log('я здесь');
         }
     } catch (error) {
         namepage = 'ErrorPage500';

@@ -1,5 +1,5 @@
 import Block from "./Block";
-import store, { StoreEvents } from "../services/store/store";
+import store, { StoreEvents } from "../services/storeTheory/store";
 
 function connect(mapStateToProps: (state: Indexed) => Indexed) {
     return function(Component: typeof Block) {

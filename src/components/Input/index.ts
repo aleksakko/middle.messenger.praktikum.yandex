@@ -16,6 +16,7 @@ export default class Input extends Block {
             // в инстансе Инпута в props.class можно добавить [] с классами для кнопки
             // здесь можно добавлять классы для инпута.. удобно по Бэму
             if (this.props.class) this.element.classList.add(...this.props.class);
+            if (this.props.accept) this.element.setAttribute('accept', this.props.accept);
         }
     }
 

@@ -8,6 +8,7 @@ export default class Alink extends Block {
         super('a', props);
         
         this.element.setAttribute('href', this.props.href);
+        if (this.props.dataApi) this.element.setAttribute('data-api', this.props.dataApi);
         this.element.textContent = this.props.label;
         //this.element.classList.add(); // здесь можно добавлять классы для кнопки.. удобно по Бэму
     }

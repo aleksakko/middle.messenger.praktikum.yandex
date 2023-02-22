@@ -19,7 +19,7 @@ export default class NavList extends Block {
                 events: {
                     click: (e: MouseEvent) => {
                         const dataId = (e.currentTarget as HTMLElement).getAttribute('data-id');
-                        this.props.parentBus.emit('clickAndGetChatId', dataId);
+                        this.props.parentBus.emit('CLICK_GET_CHAT_ID', dataId);
                     }
                 }
             });
