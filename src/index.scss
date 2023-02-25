@@ -293,6 +293,31 @@ body .avatar {
                     background: none;
                 }
             }
+
+            .buttons {
+                display: flex;
+                width: 70px;
+
+                & .buttons__elem {
+                    margin: auto;
+                    color: $col-shadow;
+                    width: 29px;
+                    height: 29px;
+                    font-size: 20px;
+                    border: 2px solid $col-shadow;
+                    border-radius: 2px;
+                    font-weight: bold;
+
+                    &:hover {
+                        border-radius: 3px;
+                    }
+
+                    &:active {
+                        font-weight: normal;
+                        background-color: $col-light;
+                    }
+                }
+            }
         }
 
         .chats-column__chats {
@@ -357,6 +382,10 @@ body .avatar {
                     .short-info span:first-child {
                         font-weight: bold;
                     }
+                }
+
+                &.active > .ava-chat {
+                    border: 3px solid $col-light;
                 }
             }
         }

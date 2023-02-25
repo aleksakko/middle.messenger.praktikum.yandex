@@ -1,8 +1,6 @@
 {{#if title}}<{{{titletag}}}>{{title}}</{{{titletag}}}>{{/if}}
-<ul>
-  {{#each this}}  
-    {{#if (startsWith @key "fieldLi")}}
-      {{{this}}}
-    {{/if}}
+<ul>    
+  {{#each arrNames}}
+    {{{get @root this}}}
   {{/each}}
 </ul>

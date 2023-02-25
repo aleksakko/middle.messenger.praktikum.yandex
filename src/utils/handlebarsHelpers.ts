@@ -9,6 +9,6 @@ Handlebars.registerHelper('get', function (root, ...keys) {
     let val = root;
     keys.forEach((key, index) => {
         if (index !== (keys.length - 1)) val = val[key];
-    })    
+    })
     return val;
 });

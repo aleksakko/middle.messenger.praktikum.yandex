@@ -155,7 +155,7 @@ export default class Form extends Block {
                 this.kids[`avaStatic${i++}`] = new Alink({
                     href: prop.href,
                     label: prop.label,
-                    class: prop.class,
+                    class: ['hidden'],
                     events: {
                         // click: (e: MouseEvent) => {
                         //     console.log(`clicked`, e.target);

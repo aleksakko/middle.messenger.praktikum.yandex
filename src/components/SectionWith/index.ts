@@ -71,6 +71,11 @@ export default class SectionWith extends Block {
                                     router.go(Routes.ChangePassword);
                                     break;
                                 }
+                                case 'chats/messenger': { //----
+                                    console.log('к чатам');
+                                    router.go(Routes.Messenger);
+                                    break;
+                                }
                             }
                         }
                     }

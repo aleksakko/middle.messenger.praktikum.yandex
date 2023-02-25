@@ -40,7 +40,7 @@ class AuthController {
             await this.api.signin(signinData);
             await this.getUser();
 
-            router.go(Routes.Profile);
+            router.go(Routes.Messenger);
         })
     }
     

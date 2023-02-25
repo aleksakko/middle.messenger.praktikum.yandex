@@ -3,6 +3,7 @@ import Block from '../../utils/Block';
 import Input from '../Input';
 import Button from '../Button';
 import UsersController from '../../services/controllers/UsersController';
+import store from '../../services/Store';
 
 interface ModalAvatarProps {
     [key: string]: any;
@@ -18,24 +19,23 @@ export default class ModalAvatar extends Block {
 
         this.element.addEventListener(
             "submit", (e) => {
-                //const target = e.target as HTMLFormElement;
                 e.preventDefault();
 
-                const fileInput = document.getElementById(this.props.inputImg.idName);
-                const formData = new FormData(this.element);
+                const fileInput = document.getElementById(this.props.inputImg.idName) as HTMLInputElement;
+                const formData = new FormData();
 
-                formData.append('avatar', fileInput.files[0], fileInput.files[0].name)
+                if (fileInput.files) {
+                    formData.append('avatar', fileInput.files[0], fileInput.files[0].name)
 
-                const elemAvatar = document.querySelector('.avatar')
-                const reader = new FileReader();
-                // reader.onload = (e) => {
-                //     elemAvatar.style.backgroundImage = `url('${e.target.result}')`;
-                // }
-                // reader.readAsDataURL(fileInput.files[0]);
-                console.log(formData.get('avatar'));
-                //setTimeout(()=> elemAvatar.style.removeProperty('background'), 1000)
-                
-                setTimeout(() => UsersController.setAvatar(formData), 3000);
+                    const elemAvatar = document.querySelector('.avatar') as HTMLDivElement
+                    const reader = new FileReader();
+                    reader.onload = () => {               
+                        if (elemAvatar) elemAvatar.style.backgroundImage = `url('${reader.result}')`;
+
+                        UsersController.setAvatar(formData, reader.result);
+                    }
+                    reader.readAsDataURL(fileInput.files[0]);
+                }
             }
         )
         

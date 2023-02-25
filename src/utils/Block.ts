@@ -1,5 +1,6 @@
 
 import EventBus from './EventBus';
+import isEqual from './isEqual';
 import randomID from './randomID';
 import { merge } from './set';
 
@@ -15,7 +16,7 @@ export default class Block {
 
     public id: string;
     protected props: Props;
-    protected eventBus: () => EventBus;
+    public eventBus: () => EventBus;
     private _meta: { tagName: string; props: Props };
     private _element!: HTMLElement | HTMLInputElement | HTMLButtonElement;
     protected kids: Record<string, Block>;
@@ -66,11 +67,9 @@ export default class Block {
             set:(target: Props, prop: string, value) => {
                 if (prop[0] === '_') {
                     throw new Error('Нет доступа');
-                } else if (target[prop] === value) {
-                    //console.log(target[prop], value);
+                } else if (isEqual(target[prop], value)) {
                     return true;
                 } else {
-                    //console.log(target[prop], value);
                     const oldTarget = { ...target };
                     this._removeEvents();
                     target[prop] = value;
@@ -163,7 +162,7 @@ export default class Block {
     }
     // Переопределяется пользователем.
     protected componentDidUpdate(oldProps: Props, newProps: Props) {
-        return (oldProps !== newProps) ? true : false;
+        return (!isEqual(oldProps, newProps)) ? true : false;
     }
 
     public setProps = (nextProps: Props) => {
@@ -172,9 +171,8 @@ export default class Block {
         }
 
         const { props, kids } = this._getKidsAndProps(nextProps);
-
         if (Object.values(kids).length)
-            merge(this.kids, kids);
+            console.log(this.kids, kids);
         
         if (Object.values(props).length)
             merge(this.props, nextProps);

@@ -3,6 +3,8 @@ import Block from '../../utils/Block';
 import SectionWith from '../../components/SectionWith';
 import withStore from '../../services/withStore';
 import isEqual from '../../utils/isEqual';
+import store from '../../services/Store';
+import httpData from '../../utils/httpData';
 
 interface ProfilePageProps {
     [key: string]: string;
@@ -66,6 +68,13 @@ class ProfilePageBase extends Block {
             },
             {
                 tag: 'a',
+                href: '/messenger',
+                label: 'к чатам',
+                dataApi: true,
+                todo: 'chats/messenger'
+            },
+            {
+                tag: 'a',
                 href: '/',
                 label: 'выйти',
                 dataApi: true,
@@ -94,15 +103,37 @@ let oldData: Record<string, any>;
 
 const mapStateToProps = function (this: any, state: Record<string, any>) {
     const data = state.user?.data;
-    if (this.kids != undefined && !isEqual(oldData, data)) {
+    
 
-        this.kids.sectionWith.tmpl.labelSpanDown.span1 = data?.email;
-        this.kids.sectionWith.tmpl.labelSpanDown.span2 = data?.login
-        this.kids.sectionWith.tmpl.labelSpanDown.span3 = data?.first_name
-        this.kids.sectionWith.tmpl.labelSpanDown.span4 = data?.second_name
-        this.kids.sectionWith.tmpl.labelSpanDown.span5 = data?.display_name
-        this.kids.sectionWith.tmpl.labelSpanDown.span6 = data?.phone
-        this.kids.sectionWith._render();
+    if (this.kids != undefined) {
+        
+        if (!isEqual(oldData, data)) {
+            const arrElems = document.getElementsByClassName('profile-cont__field');
+            setTimeout(() => {
+                arrElems[1].children[1].textContent = data?.email;
+                arrElems[2].children[1].textContent = data?.login
+                arrElems[3].children[1].textContent = data?.first_name
+                arrElems[4].children[1].textContent = data?.second_name
+                arrElems[5].children[1].textContent = data?.display_name
+                arrElems[6].children[1].textContent = data?.phone
+            }, 0)
+        }
+        
+        // здесь кешируется изображение и лишний раз не меняется если в сторе оно уже есть
+        const avatar = state.avatar ?? {};
+        const elemAvatar = this.kids.sectionWith.kids.avaChange0.element.parentNode;
+        if (avatar.base64img/*  && data?.avatar === avatar.url */) {
+            elemAvatar.style.backgroundImage = `url('${avatar.base64img}')`;
+        }
+
+        if (data?.avatar) {
+            if (!avatar.url || (avatar.url && avatar.url !== data?.avatar)) {
+                httpData(`https://ya-praktikum.tech/api/v2/resources${data?.avatar}`, (result) => {
+                    elemAvatar.style.backgroundImage = `url(${result})`;
+                    store.set('avatar', {base64img: result, url: data?.avatar});
+                })
+            }
+        }
 
         oldData = Object.assign({}, data);
         console.log('обновление', this.kids.sectionWith.creator);

@@ -1,8 +1,7 @@
 const ChangeProfilePageParam = [
     {
         tag: 'avaStatic',
-        href: '/',
-        label: ''
+        href: '/'
     },
     {
         tag: 'input',

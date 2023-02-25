@@ -1,6 +1,6 @@
 type Indexed<T = any> = {
     [key in string]: T;
-};
+} | null;
 
 function isEqual(a: Indexed, b: Indexed): boolean {
         if (a == null || b == null) {

@@ -35,12 +35,19 @@ class UsersController {
         })
     }
     
-    async setAvatar(avatar: FormData) {
+    async setAvatar(avatar: FormData, base64img: unknown) {
             console.log('------------signin start')
         await this.request(async () => {
-            const user: apiUser = await this.api.setAvatar(avatar);
+            store.set('avatar', {
+                base64img: base64img
+            });
             
-            store.set('user.data', user);
+            const user: apiUser = await this.api.setAvatar(avatar);
+            //console.log(base64img)
+            store.setMany(
+                ['avatar.url', user.avatar], 
+                ['user.data', user]
+            );
 
             router.go(Routes.Profile);
         })

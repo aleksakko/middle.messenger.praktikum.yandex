@@ -6,11 +6,11 @@ export default function withStore(mapStateToProps: (state: any) => any) {
     
     return function wrap(Component: new (props?: any) => Block) {
 
-        let currentState = null;
+        let currentState: Record<string, any> | null = null;
         
         return class WithStore extends Component {
             
-            constructor(props) {
+            constructor(props: Record<string, any>) {
                 const state: Record<string, any> = store.getState();
                 currentState = mapStateToProps.call('THIS', state); // user.data..
                 
@@ -29,7 +29,7 @@ export default function withStore(mapStateToProps: (state: any) => any) {
 
                     // если mapStateToProps всегда возвращает null, то isEqual не пройдет
                     // т.е. отключаем setProps здесь, и можно вызвать желаемый set Props внутри mapStateToProps
-                    this.kids.sectionWith.setProps({ ...propsFromState });
+                    this.setProps({ ...propsFromState });
                 })
             }
         }

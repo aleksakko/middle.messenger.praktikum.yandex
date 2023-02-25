@@ -85,8 +85,10 @@ export default class HTTPTransport {
             xhr.timeout = 5000;
             xhr.ontimeout = () => reject({ reason: 'timeout' });
 
-            if ((!apiNameMethod === 'multipart/form-data')) { // если отправляем картинку
-                xhr.setRequestHeader('Content-Type', 'application/json'); 
+            if ((apiNameMethod === 'multipart/form-data')) { // если отправляем картинку
+                xhr.setRequestHeader('mode', 'cors');
+            } else {
+                xhr.setRequestHeader('Content-Type', 'application/json');
             }
 
             xhr.withCredentials = true;
@@ -94,41 +96,11 @@ export default class HTTPTransport {
 
             if (method === METHODS.GET || !data) {
                 xhr.send();
+            } else if (apiNameMethod === 'multipart/form-data') {
+                xhr.send(data);
             } else {
                 xhr.send(JSON.stringify(data));
             }
-            
-            // if (!method) {
-            //     reject('No method');
-            //     return;
-            // }
-            
-            // const xhr = new XMLHttpRequest();
-            
-            // const isGet = method === METHODS.GET;
-            // const isData = data ? true : false;
-            // if (isGet && isData) {
-            //     url += '?' + queryStringify(data);
-            // }
-
-            // xhr.open(method, url);
-            // xhr.setRequestHeader('Content-Type', 'text/plain');    
-
-            // xhr.onload = function() {
-            //     resolve(xhr);
-            // }
-
-            // xhr.onabort = reject;
-            // xhr.onerror = reject;
-            
-            // xhr.timeout = timeout;
-            // xhr.ontimeout = reject;
-
-            // if (isGet || !isData) {
-            //     xhr.send();
-            // } else {
-            //     xhr.send(data);
-            // }
         })
     }
 }

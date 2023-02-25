@@ -25,43 +25,40 @@ export default class NavList extends Block {
     render() {   
         // console.log('start render NavList');
 
+        for (let i = iGlob; i < this.props.chatsFieldData.length; i++) {
 
-        for (; this.iGlob < this.props.chatsFieldData.length; this.iGlob++) {
-
-            if (!this.namesElementsOfNavList.includes(`fieldLi${this.iGlob}`)) { // !!!
+            if (!this.namesElementsOfNavList.includes(`fieldLi${i}`)) { // !!!
                 
-                const indexAddChat = this.props.checkAddChat ? 0 : this.iGlob; // если создание нового чата, то 0 для добавления из начала
-                console.log('add cgat', this.iGlob)
+                const indexAddChat = this.props.checkAddChat ? 0 : i; // если создание нового чата, то 0 для добавления из начала
+                console.log('add cgat', i)
+                // console.log('заходим fieldLi ', i)
+                // console.log('template', this.props.chatsFieldData[indexAddChat])
+                // console.log('data-id', this.props.usersDataId[indexAddChat])
                 
-                this.kids[`fieldLi${this.iGlob}`] = new Block('li', {
+                this.kids[`fieldLi${i}`] = new Block('li', {
                     events: {
                         click: (e: MouseEvent) => {
                             const dataId = (e.currentTarget as HTMLLIElement).getAttribute('data-id');
 
                             if ((e.target as HTMLButtonElement).classList.contains('delete-chat')
-                                /* && confirm('Здесь должно быть окошко с вопросом:\nУдалить?') */) {
+                                && confirm('Здесь должно быть окошко с вопросом:\nУдалить?')) {
 
-                                const iChat = this.props.usersDataId.indexOf(dataId);
-                                const forNodeDelete = this.namesElementsOfNavList[iChat];
-                                    
                                 console.log(this.props.chatsFieldData);
                                 console.log(this.props.usersDataId);
                                 console.log(this.namesElementsOfNavList);
-                                    
-                                delete this.namesElementsOfNavList[iChat]; // сначала удаляем из важного
-                                delete this.props.chatsFieldData[iChat]; // затем данные полей
-                                delete this.props.usersDataId[iChat]; // и наконец из dataId сопоставлений
-
-                                console.log(iChat)
                                 
+                                const iChat = this.props.usersDataId.indexOf(dataId);
+                                
+                                this.namesElementsOfNavList.splice(iChat, 1); // сначала удаляем из важного
+                                this.props.chatsFieldData.splice(iChat, 1); // затем данные полей
+                                this.props.usersDataId.splice(iChat, 1) // и наконец из dataId сопоставлений
+
                                 this.eventBus().emit('flow:render');
                                 
                                 this.props.parentBus.emit('CLICK_DELETE_CHAT', iChat, dataId);
-                                
+
                                 // запуск api удаления и если успешно то все ок удаляем до последнего
-                                delete this.kids[forNodeDelete];
                                 // если не успешно то надо как-то возвратить все обратно
-                                console.log(this.kids);
                             } else {
 
                                 // если не удаляем, то эмитим событие и передаем dataId (родителю)
@@ -72,12 +69,12 @@ export default class NavList extends Block {
                     }
                 });
                 
-                this.kids[`fieldLi${this.iGlob}`].element.innerHTML = this.props.chatsFieldData[indexAddChat];
-                this.kids[`fieldLi${this.iGlob}`].element.setAttribute('data-id', this.props.usersDataId[indexAddChat]);
+                this.kids[`fieldLi${i}`].element.innerHTML = this.props.chatsFieldData[indexAddChat];
+                this.kids[`fieldLi${i}`].element.setAttribute('data-id', this.props.usersDataId[indexAddChat]);
                 
                 
-                if (this.props.checkAddChat) this.namesElementsOfNavList.unshift(`fieldLi${this.iGlob}`)
-                    else this.namesElementsOfNavList.push(`fieldLi${this.iGlob}`) // если init render, то в конец
+                if (this.props.checkAddChat) this.namesElementsOfNavList.unshift(`fieldLi${i}`)
+                    else this.namesElementsOfNavList.push(`fieldLi${i}`) // если init render, то в конец
             }
 
         }
