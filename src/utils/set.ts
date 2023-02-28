@@ -2,6 +2,36 @@ export type Indexed<T = any> = {
     [key in string]: T;
 }
 
+export function mergeObjAndArr(lhs: Indexed, rhs: Indexed): Indexed {
+    if (Array.isArray(lhs) && Array.isArray(rhs)) {
+      return lhs.concat(rhs);
+    }
+  
+    for (const p in rhs) {
+      if (!Object.prototype.hasOwnProperty.call(rhs, p)) continue;
+  
+      try {
+        if (rhs[p].constructor === Object) {
+          if (!lhs[p]) {
+            lhs[p] = {} as Indexed;
+          }
+          lhs[p] = merge(lhs[p] as Indexed, rhs[p] as Indexed);
+        } else if (Array.isArray(rhs[p])) {
+          if (!Array.isArray(lhs[p])) {
+            lhs[p] = [];
+          }
+          lhs[p] = lhs[p].concat(rhs[p]);
+        } else {
+          lhs[p] = rhs[p];
+        }
+      } catch (e) {
+        lhs[p] = rhs[p];
+      }
+    }
+  
+    return lhs;
+  }
+
 export function merge(lhs: Indexed, rhs: Indexed): Indexed {
     for (const p in rhs) {
         if (!Object.prototype.hasOwnProperty.call(rhs, p)) continue;

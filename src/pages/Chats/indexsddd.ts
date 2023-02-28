@@ -1,7 +1,7 @@
 //import Connect from "../../../../trening/storeN/Connect";
-import ChatsPage from "./indexChats";
+// import ChatsPage from "./index";
 
-export default ChatsPage;
+// export default ChatsPage;
 
 // export default Connect(
 //     ChatsPage,

@@ -15,11 +15,11 @@ type Options = {
 // type OptionsNoMethod = Omit<Options, 'method'>;
 // type HTTPMethod = ( url: string, options?: OptionsNoMethod) => Promise<XMLHttpRequest>
 
-// function queryStringify(data: Record<string, unknown>): string {
-// 	return Object.keys(data)
-//         .map(key => key + '=' + data[key])
-//         .join('&');
-// }
+function queryStringify(data: {[key in string]: unknown}): string {
+	return Object.keys(data)
+        .map(key => key + '=' + data[key])
+        .join('&');
+}
 
 export default class HTTPTransport {
     static API_URL = 'https://ya-praktikum.tech/api/v2';
@@ -29,8 +29,9 @@ export default class HTTPTransport {
         this.endpoint = `${HTTPTransport.API_URL}${endpoint}`;
     }
 
-    public get<Response>(path = '/'): Promise<Response> {
-        return this.request<Response>( this.endpoint + path);
+    public get<Response, T>(path = '/', data?: T): Promise<Response> {
+        const query = data ? `?${queryStringify(data)}` : ''; 
+        return this.request<Response>( this.endpoint + path + query);
     }
     
     public post<Response = void> (path: string, data?: unknown): Promise<Response> {
@@ -55,9 +56,10 @@ export default class HTTPTransport {
         });
     }
     
-    public delete<Response> (path: string): Promise<Response> {
+    public delete<Response> (path: string, data?: unknown): Promise<Response> {
         return this.request<Response>( this.endpoint + path, {
-            method: METHODS.DELETE
+            method: METHODS.DELETE,
+            data
         });
     }
 
@@ -72,7 +74,6 @@ export default class HTTPTransport {
                 if (xhr.readyState === XMLHttpRequest.DONE) {
                     if (xhr.status < 400) {
                         resolve(xhr.response);
-                        console.log(xhr)
                         console.log(xhr.status, xhr.response);
                     } else {
                         reject(xhr.response);

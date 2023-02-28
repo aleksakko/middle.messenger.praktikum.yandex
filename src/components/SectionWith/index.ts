@@ -89,9 +89,9 @@ export default class SectionWith extends Block {
                     dataApi: prop.dataApi,
                     events: {
                         'click': (e: MouseEvent) => {
-                            console.log(`clicked`, e.target)
+                            // console.log(`clicked`, e.target)
                             const target = e.target as HTMLLinkElement;
-                            target.classList.toggle('modal-avatar');
+                            target.classList.toggle('modal-bg-avatar');
                             target.textContent = target.textContent ? '' : 'сменить';
                             
                             const elemModal = this.kids.modalAva.element;
@@ -130,8 +130,7 @@ export default class SectionWith extends Block {
         if(this.props.className) this.element.classList.add(...this.props.className);
     }
     
-    render() {   
-        console.log('SectionWith.render()');        
+    render() {
         
         return this.compile(template, { 
             title: this.props.title, 

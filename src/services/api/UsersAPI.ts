@@ -23,7 +23,7 @@ export default class UsersAPI extends BaseAPI {
     }
     
     public searchUsers(login: string): Promise<apiUser[]> {
-        return this.http.post('/logout', {login: login});
+        return this.http.post('/search', {login: login});
     }
 
     create = undefined;

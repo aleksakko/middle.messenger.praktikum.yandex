@@ -52,7 +52,7 @@ export default class ModalAvatar extends Block {
             className: this.props.buttonSubmit.className
         })
 
-        this.element.classList.add('modal', 'hidden-vis');
+        this.element.classList.add('modal', 'modal-avatar', 'hidden-vis');
         this.element.setAttribute('enctype', 'multipart/form-data');
     }
     

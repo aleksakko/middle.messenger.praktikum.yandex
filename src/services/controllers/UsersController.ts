@@ -5,7 +5,7 @@ import store from "../Store";
 class UsersController {
     private api = new UsersAPI();
     
-    async request(req: () => void) {
+    async req(req: () => void) {
         store.set('user.isLoading', true); // можно крутить loader пока идет загрузка
 
         try {
@@ -14,7 +14,7 @@ class UsersController {
             await req();
             
             store.set('user.error', undefined);
-        } catch (e: any) {
+        } catch (e: unknown) {
             console.log('request catch')
 
             store.set('user.error', e);
@@ -25,8 +25,8 @@ class UsersController {
     }
 
     async setProf(profileData: apiSignupData) {
-            console.log('--------------setProf start')
-        await this.request(async () => {
+        console.log('--------------setProf start')
+        await this.req(async () => {
             const user: apiUser = await this.api.setProf(profileData);
 
             store.set('user.data', user);
@@ -36,8 +36,8 @@ class UsersController {
     }
     
     async setAvatar(avatar: FormData, base64img: unknown) {
-            console.log('------------signin start')
-        await this.request(async () => {
+        console.log('------------signin start')
+        await this.req(async () => {
             store.set('avatar', {
                 base64img: base64img
             });
@@ -54,8 +54,8 @@ class UsersController {
     }
     
     async setPass(passData: apiPass) {
-            console.log('------------setPass start')
-        await this.request(async () => {
+        console.log('------------setPass start')
+        await this.req(async () => {
             await this.api.setPass(passData);
 
             alert('пароль успешно изменен')
@@ -65,27 +65,29 @@ class UsersController {
     }
 
     async getUserId(id: number) {
+        console.log('------------getUserId start');
         try {
-            console.log('------------getUserId try');
             const user: apiUser = await this.api.getUserId(id);
 
             // подумать либо в контролере возвращать, либо записывать результат в стор
             //store.set('user.data', user);
+            return user;
         } catch (e) {
-            console.log('getUserId catch');
+            console.log('getUserId catch (error)');
             //store.set('user.error', e);
         }
     }
 
     async searchUsers(login: string) {
+        console.log('------------searchUsers start');
         try {
-            console.log('------------searchUsers try');
             const users: apiUser[] = await this.api.searchUsers(login);
 
             // подумать либо в контролере возвращать, либо записывать результат в стор
             //store.set('user.data', user);
+            return users;
         } catch (e) {
-            console.log('searchUsers catch');
+            console.log('searchUsers catch (error)');
             //store.set('user.error', e);
         }
     }

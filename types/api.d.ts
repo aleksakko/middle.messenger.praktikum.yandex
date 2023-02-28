@@ -23,11 +23,60 @@ interface apiUser {
     avatar: string;
   }
 
+interface apiChatUser extends apiUser {
+  role: string;
+}
 interface apiPass {
     oldPassword: string;
     newPassword: string;
 }
-
 interface apiLogin {
     login: string;
 }
+interface apiChats {
+    id: number,
+    title: string,
+    avatar: string | null,
+    created_by: number
+    unread_count: number,
+    last_message: {
+    user: {
+        first_name: string,
+        second_name: string,
+        avatar: string,
+        email: string,
+        login: string,
+        phone: string
+      },
+      time: string,
+      content: string
+    } | null
+  }[]
+
+interface apiReqQueryChats {
+    offset?: number;
+    numbers?: number;
+    title?: string;
+}
+interface apiReqQueryChatUser {
+    offset?: number;
+    limit?: number;
+    name?: string;
+    email?: string;
+}
+
+interface apiDelChats {
+    userId: number;
+    result: {
+        id: number;
+        title: string;
+        avatar: string | null;
+    };
+}
+
+interface apiReqUsersChat {
+    users: [
+      number
+    ],
+    chatId: number
+  }

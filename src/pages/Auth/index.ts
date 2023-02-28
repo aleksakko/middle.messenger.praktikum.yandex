@@ -8,11 +8,9 @@ interface AuthPageProps {
 }
 export default class AuthPage extends Block {
     constructor(props: AuthPageProps) {
-        loggg.push(['AuthPage start constructor', 'Auth/index.ts 11']);
 
         super('main', props);
         
-        loggg.push(['AuthPage start constructor', 'Auth/index.ts 15']);
     }
     
     init() { 

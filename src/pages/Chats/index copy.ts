@@ -7,44 +7,111 @@ import NavList from './NavList';
 import SectionWith from '../../components/SectionWith';
 import Handlebars from 'handlebars';
 
-import TESTDATA_ChatList from './TESTDATA_USERS'; // список информации о чатах как раз будем получать
-import CHATSDATA from './TESTDATA_CHATS.json'; // ветви сообщений чатов
+import ChatListUsersData from './TESTDATA_USERS'; // список информации о чатах как раз будем получать
+import CHATSDATA from './CHATSDATA.json'; // ветви сообщений чатов
 import withStore from '../../services/withStore';
 import httpData from '../../utils/httpData';
 import store from '../../services/Store';
 import Button from '../../components/Button';
 import ChatsController from '../../services/controllers/ChatsController';
-import randomID from '../../utils/randomID';
 
 interface ChatsPageProps {
     [key: string]: string;
 }
-export class ChatsPageBase extends Block {
-    public static TODO = {
-        CLICK_GET_CHAT_ID: 'click:get-chat-id',
-        MESSAGE_WRITED: 'this-chat:message-writed',
-        CLICK_DELETE_CHAT: 'click:delete-chat',
-        CLICK_ADD_USER: 'click:add-user',
-        CLICK_DELETE_USER: 'click:delete-user'
-    }
+class ChatsPageBase extends Block {
     
     constructor (props: ChatsPageProps) {
         super('main', props);
+        //console.log('constructor Reg после super');
     }
     
-    init() {
+    init() {   
+        // console.log('init Chats');
         
-
         this.kids.avaLink = new Alink({
             href: '/profile'
         })
         this.kids.searchInput = new Input({
             type: 'search',
-            idName: 'search-chats',
+            idName: 'search',
             placeholder: 'найти',
         })
-                
+
+        ChatsController.getChats();
+
+        const tagsModel = `<div class="ava-chat"></div>
+            <div class="short-info"><span>{{nickname}}</span><span>{{partchat}}</span></div>
+            <div class="about"><button class="delete-chat">-</button></div>`; //пока вместо <div class="about"><span>{{about}}</span></div>
+        const UsersDataCompile: string[] = [];
+        const UsersDataId: string[] = [];
+
+        this.kids.addChat = new Button({
+            type: 'button',
+            label: '+',
+            idName: 'add-chat',
+            className: ['buttons__elem'],
+            events: {
+                'click': () => {
+                    const nameChat = prompt('введите имя чата') ?? 'чат без имени'; // сделать правильнее                
+                    ChatsController.createChat(nameChat)
+                        .then(res => {
+                            const tagsModel = `<div class="ava-chat"></div>
+                                <div class="short-info"><span>{{nickname}}</span><button class="add-user">добавить чатника</button></div>
+                                <div class="about"><button class="delete-chat">-</button><span>{{about}}</span></div>`;
+                            const id = ChatListUsersData.length;
+                            console.log(res[0])
+                            const dataNewElem = {
+                                id: 'chat' + id,
+                                nickname: 'new Chat ' + id,
+                                partchat: '',
+                                about: "null"
+                            }
+                            ChatListUsersData.unshift(dataNewElem);
+                            CHATSDATA['chat' + id] = [];
+                            
+                            UsersDataCompile.unshift( Handlebars.compile(tagsModel)(dataNewElem) );
+                            UsersDataId.unshift(dataNewElem.id);
         
+                            this.kids.chatsList.setProps({
+                                // аншифт объект поновой не передаю, так как при создании уже передалась ссылка на них
+                                checkAddChat: true // указание, что добавляю новый чат с помощью кнопки +
+                            })
+                            this.kids.chatsList.eventBus().emit('flow:render')
+
+                            // ChatsController.getChats().then..
+                        })
+                    
+
+                }
+            }
+        })
+        
+        // Инициализация ЧатЛиста - создание инстанса НавигационногоСписка
+        // компиляция шаблона и данных каждого элемента списка в массив и отправка его пропсами Инстансу
+        
+        ChatListUsersData.unshift({ // этот объект импортируется изначально из модуля рядом
+            id: `chat${ChatListUsersData.length}`,
+            nickname: '',
+            partchat: '',
+            about: null
+        })
+        CHATSDATA[ChatListUsersData[0].id] = []
+        ChatListUsersData.forEach(user => {
+            UsersDataCompile.push( Handlebars.compile(tagsModel)(user) );
+            UsersDataId.push(user.id);
+        })
+
+        this.dataChatManipulate();
+
+        this.kids.chatsList = new NavList({
+            classNav: 'chats-column__chats',
+            creator: 'Chats',
+            chatsFieldData: UsersDataCompile,
+            usersDataId: UsersDataId,
+            parentBus: this.eventBus(), // передача родительского EventBus'a с подписками            
+        })
+
+
 
         this.kids.writeMessageCont = new SectionWith({
             className: ['write-message-cont', 'hidden'],
@@ -67,7 +134,7 @@ export class ChatsPageBase extends Block {
                                     console.log('Отправлено в открытый чат:', '\n', target.value);
                                     const elemChat = document.querySelector('.this-chat') as HTMLElement;
                                     
-                                    this.eventBus().emit(ChatsPageBase.TODO.MESSAGE_WRITED, elemChat.dataset.id, target.value);
+                                    this.eventBus().emit('MESSAGE_WRITED', elemChat.dataset.id, target.value);
                                 }
                                 target.value = '';
                             }
@@ -91,7 +158,7 @@ export class ChatsPageBase extends Block {
                                 console.log('Отправлено в открытый чат:', '\n', fieldMessage.value);
                                 const elemChat = document.querySelector('.this-chat') as HTMLElement;
                                 
-                                this.eventBus().emit(ChatsPageBase.TODO.MESSAGE_WRITED, elemChat.dataset.id, fieldMessage.value);
+                                this.eventBus().emit('MESSAGE_WRITED', elemChat.dataset.id, fieldMessage.value);
                             }
                             fieldMessage.value = '';
                             fieldMessage.focus();
@@ -100,102 +167,6 @@ export class ChatsPageBase extends Block {
                 }
             ]
         })
-
-        const tagsModel = 
-            `<div class="ava-chat"></div>
-            <div class="short-info">
-                <span>{{title}} / id {{id}}</span>
-                <span class="last-msg">{{partchat}}{{last_message.content}}</span>
-                <span class"users">{{nickname}}</span>
-            </div>
-            <div class="about">
-                <button class="delete-chat">del</button>
-                чатники
-                <div>
-                    <button class="delete-user">-</button>
-                    <button class="add-user">+</button>
-                </div>
-            </div>`;
-
-        const UsersDataCompile: string[] = [];
-        const UsersDataId: number[] = [];
-
-        this.kids.addChat = new Button({
-            type: 'button',
-            label: '+',
-            idName: 'add-chat',
-            className: ['buttons__elem'],
-            events: {
-                'click': () => {
-                    const nameChat = prompt('Красивое (в будущем) окошко с надписью:\nВведите имя чата') ?? 'чат без имени'; // сделать правильнее
-
-                    ChatsController.createChat(nameChat)
-                        .then(res => {                            
-                            const id = TESTDATA_ChatList.length;
-                            console.log(res[0])
-                            const dataNewElem = {
-                                id: res[0].id,
-                                nickname: 'new Chat ' + id,
-                                partchat: '',
-                                about: "null"
-                            }
-                            TESTDATA_ChatList.unshift(dataNewElem);
-                            CHATSDATA[res[0].id] = [];
-                            
-                            UsersDataCompile.unshift( Handlebars.compile(tagsModel)(dataNewElem) );
-                            UsersDataId.unshift(dataNewElem.id);
-        
-                            this.kids.chatsList.setProps({
-                                // аншифт объект поновой не передаю, так как при создании уже передалась ссылка на них
-                                checkAddChat: true // указание, что добавляю новый чат с помощью кнопки +
-                            })
-                            this.kids.chatsList.eventBus().emit('flow:render')
-
-                            // ChatsController.getChats().then..
-                        }).catch(e => {
-                            console.log(e)
-                        })
-
-                }
-            }
-        })
-
-        //partchat временно из тестового, надо достать nickname и пробежаться по ним
-         //пока вместо <div class="about"><span>{{about}}</span></div>
-
-        // Инициализация ЧатЛиста - создание инстанса НавигационногоСписка
-        this.kids.chatsList = new NavList({
-            classNav: 'chats-column__chats',
-            creator: 'Chats',
-            UsersDataCompile: UsersDataCompile,
-            UsersDataId: UsersDataId,
-            chatsBus: this.eventBus(), // передача родительского EventBus'a с подписками            
-        })
-
-        ChatsController.getChats()
-            .then(() => {
-                const chats: Record<string, any>[] = store.getState().chats ?? [];
-                
-                // компиляция шаблона и данных каждого элемента списка в массив и отправка его пропсами Инстансу                
-                chats.forEach(chat => {
-                    UsersDataCompile.push( Handlebars.compile(tagsModel)(chat) );
-                    UsersDataId.push(chat.id);
-                    // сделать статический объект с кешем чатов
-                    CHATSDATA[chat.id] = [`строка чата ${chat.id}`];
-                })   
-                TESTDATA_ChatList.forEach(user => {
-                    UsersDataCompile.push( Handlebars.compile(tagsModel)(user) );
-                    UsersDataId.push(user.id);
-                })
-                    return chats;
-            }).then((chats) => {
-
-                this.dataChatManipulate();
-                this.kids.chatsList.setProps({randNumForUpdate:randomID(10)})
-
-                
-
-            });
         
         this.element.classList.add('chats-flex');
     }
@@ -205,30 +176,26 @@ export class ChatsPageBase extends Block {
     dataChatManipulate() {
         let checkHideStub = false,
             checkHideThisChat = true;
-        // инициализация и сохранение в замыкании - объект с кэшем чатов в форме {id: тэг <template> с детьми}
-        // для эффективного DOM неиспользуемые ветви чатов будут здесь, а используемая будет отсюда доставаться
+        // инициализация и сохранение в замыкании - объект с кэшем чатов в форме {id: <template> с детьми}
         const chatIdTemplate: Record<string, HTMLTemplateElement> = {};
         let prevId: string;
         
-        // ------------------------------------------------------
         /* используем здешний eventBus для отслеживания клика по чату из списка и
         изменения данных активного окна (.this-chat)
-        подписка на событие "Клик по чату из навигационного списка и получение его id" */
-        this.eventBus().on(ChatsPageBase.TODO.CLICK_GET_CHAT_ID, (id) => {
+        подписка на событие "Клик по чату из навигационного списка и получение его id"
+        для эффективного DOM переносим неиспользуемые ветви чатов в кэш чатов, доставая оттуда используемые */
+        this.eventBus().on('CLICK_GET_CHAT_ID', (id) => {
             
-            console.log(id, this.kids);
+            console.log(id);
             
-            // ------- подкрашиваем выбранный элемент списка
             const elemOfList = document.querySelector(`[data-id="${id}"]`);
-            // console.log(elemOfList);
             elemOfList?.classList.add('active');
-            
             if (prevId && prevId !== id) {
                 const prevElemOfList = document.querySelector(`[data-id="${prevId}"]`);
                 prevElemOfList?.classList.remove('active');
             }
+            console.log(elemOfList);
             
-            // -------- скрытие заглушки, показ окна чата
             const elemStub = document.querySelector('.stub-chat') as HTMLElement;
             const elemChat = document.querySelector('.this-chat') as HTMLElement;
             
@@ -241,9 +208,7 @@ export class ChatsPageBase extends Block {
                 this.kids.writeMessageCont.element.classList.remove('hidden');
                 checkHideThisChat = false;
             }
-
-            // ---------- логика - замена данных выбранного чата кэшем, если они есть + вебсокет
-            // иначе получаем новые с сервера (ДОПисать получение сообщений, открытие вебсокета)            
+            
             const checkTemp = chatIdTemplate[id] ? true : false;
             const temp = checkTemp ? chatIdTemplate[id] : document.createElement('template');
                         
@@ -262,9 +227,7 @@ export class ChatsPageBase extends Block {
                 chatIdTemplate[prevId].content.replaceChildren(...Array.from(elemChat.children));
             }
             prevId = id;
-            
-            // очищаем и меняем родителя на реальный элемент .this-chat - новый контент появляется моментально
-            // (в кэше остается одинокий элемент template)
+            // очищаем и переносим детей (ссылки) из шаблона (в кэше остается только элемент template)
             elemChat.textContent = '';
             elemChat.replaceChildren(...Array.from(temp.content.children));
             
@@ -272,9 +235,8 @@ export class ChatsPageBase extends Block {
             elemChat.scrollTop = elemChat.scrollHeight;
         })
 
-        // -------------------------------------------
         // подписка на событие 'сообщение написано' с получением id чата и сообщения
-        this.eventBus().on(ChatsPageBase.TODO.MESSAGE_WRITED, (id, msg) => {
+        this.eventBus().on('MESSAGE_WRITED', (id, msg) => {
             console.log(id);
             
             const elemChat = document.querySelector('.this-chat') as HTMLElement;
@@ -286,10 +248,9 @@ export class ChatsPageBase extends Block {
             elemChat.scrollTop = elemChat.scrollHeight;
         })
 
-        // --------------------------------------------
-        this.eventBus().on(ChatsPageBase.TODO.CLICK_DELETE_CHAT, (id, idName) => {
+        this.eventBus().on('CLICK_DELETE_CHAT', (id, idName) => {
             delete CHATSDATA[idName];
-            delete TESTDATA_ChatList[id];
+            delete ChatListUsersData[id];
         })
     }
     
@@ -317,8 +278,8 @@ export class ChatsPageBase extends Block {
 let oldData: Record<string, any>;
 
 const mapStateToProps = function (this: any, state: Record<string, any>) {
-    const data = state.user?.data;
-    // console.log(data ? state.chats : null)
+    const data = state.chats
+    console.log(data ? state.chats : null)
     
 
     if (this.kids != undefined) {
