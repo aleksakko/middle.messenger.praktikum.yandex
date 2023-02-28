@@ -13,6 +13,7 @@ export default class Input extends Block {
             if (this.props.placeholder) this.element.setAttribute('placeholder', this.props.placeholder);
             if (this.props.value) this.element.value = this.props.value;
             if (this.props.required) {this.element.setAttribute('required', '');}
+            if (this.props.autocomplete) this.element.setAttribute('autocomplete', this.props.autocomplete);
             // в инстансе Инпута в props.class можно добавить [] с классами для кнопки
             // здесь можно добавлять классы для инпута.. удобно по Бэму
             if (this.props.class) this.element.classList.add(...this.props.class);

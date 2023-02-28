@@ -11,7 +11,7 @@ import TESTDATA_ChatList from './TESTDATA_USERS'; // список информа
 import CHATSDATA from './TESTDATA_CHATS.json'; // ветви сообщений чатов
 import withStore from '../../services/withStore';
 import httpData from '../../utils/httpData';
-import store from '../../services/Store';
+import store, { StoreEvents } from '../../services/Store';
 import Button from '../../components/Button';
 import ChatsController from '../../services/controllers/ChatsController';
 import randomID from '../../utils/randomID';
@@ -104,9 +104,9 @@ export class ChatsPageBase extends Block {
         const tagsModel = 
             `<div class="ava-chat"></div>
             <div class="short-info">
-                <span>{{title}} / id {{id}}</span>
-                <span class="last-msg">{{partchat}}{{last_message.content}}</span>
-                <span class"users">{{nickname}}</span>
+                <span>{{title}} / chat_id {{id}}</span>
+                <span class="last-msg">{{last_msg_test}}{{last_message.content}}</span>
+                <span class="users">{{users}}</span>
             </div>
             <div class="about">
                 <button class="delete-chat">del</button>
@@ -130,17 +130,17 @@ export class ChatsPageBase extends Block {
                     const nameChat = prompt('Красивое (в будущем) окошко с надписью:\nВведите имя чата') ?? 'чат без имени'; // сделать правильнее
 
                     ChatsController.createChat(nameChat)
-                        .then(res => {                            
+                        .then((res: apiResCreateChat) => {                            
                             const id = TESTDATA_ChatList.length;
-                            console.log(res[0])
+                            const data = store.getState().user.data;
+                            
                             const dataNewElem = {
                                 id: res[0].id,
-                                nickname: 'new Chat ' + id,
-                                partchat: '',
-                                about: "null"
+                                title: res[0].title,
+                                users: data.login
                             }
                             TESTDATA_ChatList.unshift(dataNewElem);
-                            CHATSDATA[res[0].id] = [];
+                            CHATSDATA[res[0].id] = [`ПРИМЕР СООБЩЕНИЯ ${res[0].id}`];
                             
                             UsersDataCompile.unshift( Handlebars.compile(tagsModel)(dataNewElem) );
                             UsersDataId.unshift(dataNewElem.id);
@@ -247,6 +247,7 @@ export class ChatsPageBase extends Block {
             const checkTemp = chatIdTemplate[id] ? true : false;
             const temp = checkTemp ? chatIdTemplate[id] : document.createElement('template');
                         
+            //console.log(CHATSDATA)
             if (!checkTemp) {
                 CHATSDATA[id].forEach((msg: string) => {
                     const spanEl = document.createElement('SPAN');

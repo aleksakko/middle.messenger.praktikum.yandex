@@ -25,7 +25,7 @@ export default class ModalAvatar extends Block {
                 const formData = new FormData();
 
                 if (fileInput.files) {
-                    formData.append('avatar', fileInput.files[0], fileInput.files[0].name)
+                    formData.append('avatar', fileInput.files[0])
 
                     const elemAvatar = document.querySelector('.avatar') as HTMLDivElement
                     const reader = new FileReader();

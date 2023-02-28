@@ -64,7 +64,12 @@ interface apiReqQueryChatUser {
     name?: string;
     email?: string;
 }
-
+interface apiResCreateChat {
+  0: {
+    id: number;
+    title: string;
+  };
+}
 interface apiDelChats {
     userId: number;
     result: {

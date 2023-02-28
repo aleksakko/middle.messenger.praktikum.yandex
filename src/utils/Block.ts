@@ -19,7 +19,7 @@ export default class Block {
     public eventBus: () => EventBus;
     private _meta: { tagName: string; props: Props };
     private _element!: HTMLElement | HTMLInputElement | HTMLButtonElement;
-    protected kids: Record<string, Block>;
+    protected kids: Record<string, Block | any>;
 
     /** JSDoc
    * @param {string} tagName

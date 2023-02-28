@@ -35,12 +35,26 @@ class ChatsController {
 
             store.set('chats', chats)
         } catch (e) {
-            console.log('------------getChats catch (error)', e);
+            console.error(e);
             store.set('chats.error', e);
         }
     }
 
-    // получить чаты, создателей и (в будущем аватары)
+    async getUsers(id: number, queryObj?: apiReqQueryChats) {
+        console.log('------------getUsers start')
+        try {
+            const users: apiChatUser[] = queryObj ? 
+                await this.api.readUsers(id ,queryObj) : 
+                await this.api.readUsers(id);
+            
+            return users;
+        } catch (e) {
+            console.error(e);
+            store.set('chats.error', e);
+        }
+    }
+
+    // получить ЧАТЫ, ПОЛЬЗОВАТЕЛЕЙ и (в будущем аватары)
     async getChatsAndUsers(queryObj?: apiReqQueryChats) {
         console.log('------------getChats start')
         try {
@@ -51,7 +65,7 @@ class ChatsController {
             store.set('chats', chats)
             const chatsUsers: apiChatUser[][] = []
             for (const chat of chats) {
-                const users = await this.api.readUsers( chat.id)
+                const users = await this.api.readUsers( chat.id )
                 chatsUsers.push( <any>users );
             }
             store.set('chatsUsers', chatsUsers)
@@ -62,23 +76,25 @@ class ChatsController {
         }
     }
 
-    async createChat(title: string): Promise<apiChats[]> {
+    async createChat(title: string): Promise<apiResCreateChat> {
         console.log('------------createChat start')
-        const chats = await this.req(async () => {
+        const res = <apiResCreateChat>await this.req(async () => {
             try {
-                const chat = await this.api.create(title);
+                const res = await this.api.create(title);
+                const chat = { id: res.id, title };
                 
                 const chats = store.getState().chats ?? [];
-                chats.unshift(chat)
-                store.set('chats', chats)
+                chats.unshift(chat);
 
-                return chats;
+                store.set('chats', chats);
+
+                if (chat) return chat;
             } catch (e) {
                 console.log(e);
                 return e;
             }
         })
-        return chats;
+        return res;
     }
 
     async deleteChat(idChat: number) {
@@ -86,6 +102,7 @@ class ChatsController {
         await this.req(async () => {
             try {
                 const res = await this.api.deleteChat(idChat);
+                console.log(res);
 
                 const index = store.getState().chats.findIndex(
                     (chat: Record<string, any>) => chat.id === res.result.id
@@ -113,13 +130,21 @@ class ChatsController {
 
     async addUsersToChat(usersData: apiReqUsersChat) {
         console.log('---------------addUsersToChat start')
-        await this.req(async () => {
+        const res = await this.req(async () => {
             try {
-                await this.api.addUsersToChat(usersData)
+                console.log(usersData);
+                const res = await this.api.addUsersToChat( usersData );
+                console.log(res);
+                const chatUsers = await this.api.readUsers( usersData.chatId );
+                
+                console.log(chatUsers);
+                
+                return chatUsers;
             } catch (e) {
                 console.log(e);
             }
         })
+        return res;
     }
 }
 

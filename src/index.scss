@@ -330,7 +330,7 @@ body .avatar {
             // width: 70px;
             // overflow-x: hidden;
 
-            @include bg-repeat(-45deg, transparent, $col-shadow20, 10, 10);
+            @include bg-repeat(-45deg, transparent, $col-shadow10, 10, 10);
 
             ul {
                 display: flex;
@@ -344,6 +344,7 @@ body .avatar {
                 display: flex;
                 flex-direction: row;
                 width: 98%;
+                height: 60px;
                 margin: 0 auto;
                 border-bottom: 1px solid $col-shadow;
                 font-size: 12px;
@@ -365,7 +366,7 @@ body .avatar {
 
                     .delete-chat {
                         width: fit-content;
-                        margin-bottom: 5px;
+                        margin-top: 5px;
                         align-self: flex-end;
                         font-size: 10px;
                     }
@@ -373,12 +374,6 @@ body .avatar {
                     .delete-user,
                     .add-user {
                         width: 45%;
-                    }
-
-                    span {
-                        background-color: $col-light;
-                        display: inline-block;
-                        border: 1px solid $col-shadow;
                     }
                 }
 
@@ -391,8 +386,23 @@ body .avatar {
                         font-size: 15px;
                     }
 
+                    & > span:nth-child(2) {
+                        font-size: 12px;
+                        margin: auto 0;
+                        display: inline-block;
+                        max-width: 250px;
+                        overflow-x: hidden;
+                        text-overflow: ellipsis;
+                        white-space: nowrap;
+                    }
+
                     & > span:nth-child(3) {
-                        margin-top: 5px;
+                        font-size: 12px;
+                        display: inline-block;
+                        max-width: 250px;
+                        overflow-x: auto;
+                        white-space: nowrap;
+                        margin-top: auto;
                     }
                 }
 
@@ -537,3 +547,23 @@ body .avatar {
 }
 
 // -----------------------------------
+
+// WebKit
+::-webkit-scrollbar {
+    width: 8px;
+    height: 5px;
+}
+
+  ::-webkit-scrollbar-thumb {
+    background-color: $col-shadow90;
+}
+
+// Firefox
+* {
+    scrollbar-color: $col-shadow90 transparent;
+    scrollbar-width: thin;
+}
+
+* ::-webkit-scrollbar-track {
+    background-color: transparent;
+}

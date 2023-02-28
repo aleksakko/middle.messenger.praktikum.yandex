@@ -4,6 +4,7 @@ import Input from '../Input';
 import UsersController from '../../services/controllers/UsersController';
 import { ChatsPageBase } from '../../pages/Chats';
 import store from '../../services/Store';
+import ChatsController from '../../services/controllers/ChatsController';
 
 interface ModalChatsProps {
     [key: string]: any;
@@ -20,29 +21,30 @@ export default class ModalChats extends Block {
         this.kids.inputSearch = new Input({
             type: 'search',
             idName: 'modal__search-input',
-            placeholder: 'найти по логину',
+            placeholder: 'Поиск чатников',
+            autocomplete: 'off',
             events: {
                 'keyup': (e: KeyboardEvent) => {
                     if (e.key) {
                         const target = e.target as HTMLInputElement;
-                        console.log(target.value)
+                        //console.log(target.value)
+                        const elemTarget = document.getElementById('modal-chats__results');
+
                         UsersController.searchUsers(target.value)
-                            .then(res => {
+                        .then(res => {
+                       
+                            if (res?.length !== 0 && elemTarget) {                                    
                                 
-                                const elemTarget = document.getElementById('modal-chats__results');  
-                                
-                                if (res?.length !== 0 && elemTarget) {                                    
-                                    
                                     elemTarget.innerHTML = '<br/>';
-                                    
+                                
                                     res?.forEach((user) => {
                                         const wrap = document.createElement('div');
                                         wrap.dataset.id = user.id.toString();
-                                        wrap.classList.add('modal-chats__results__one');
+                                        wrap.classList.add('modal-chats__results__add');
 
                                         const templateStr = 
                                         `<button>+</button>
-                                        <span>${user.login}\n</span>
+                                        <span>${user.login}</span>
                                         <span> ${user.email}</span>`
 
                                         wrap.innerHTML = templateStr;
@@ -62,23 +64,48 @@ export default class ModalChats extends Block {
             }
         })
         
-        this.props.chatsBus.on(ChatsPageBase.TODO.CLICK_ADD_USER, (idChat: number) => {
+        this.props.chatsBus.on(ChatsPageBase.TODO.CLICK_ADD_USER, (/* idChat: number */) => {
             
-            this.kids.inputSearch.element.classList.remove('hidden')
-
-            
-            console.log(idChat)
-        });
-        this.props.chatsBus.on(ChatsPageBase.TODO.CLICK_DELETE_USER, (idChat: number) => {
-            this.kids.inputSearch.element.classList.add('hidden')
             const elemTarget = document.getElementById('modal-chats__results');
+            if (elemTarget) elemTarget.innerHTML = '';
+            (elemTarget as any).previousElementSibling.textContent = '';
             
-            console.log(store.getState())
+        });
+
+        // подгрузка необходимых данных в модальном окне для манипуляций при клике на DELETE-USER
+        this.props.chatsBus.on(ChatsPageBase.TODO.CLICK_DELETE_USER, (idChat: number) => {
             
-            if (elemTarget) {
-                console.log();
-            }
-            console.log(idChat)
+            const elemTarget = document.getElementById('modal-chats__results');
+            if (elemTarget) elemTarget.innerHTML = 'ЧАТНИКИ ЭТОЙ КОМНАТЫ:<br/><br/>';
+            (elemTarget as any).previousElementSibling.textContent = '';
+         
+            ChatsController.getUsers(idChat)
+                .then(users => {
+                    
+                    if (users?.length !== 1 && elemTarget) {
+                        
+                        const thisUser = store.getState().user.data;
+
+                        users?.forEach(user => {
+
+                            if (user.login === thisUser.login) return;
+
+                            const wrap = document.createElement('div');
+                            wrap.dataset.id = user.id.toString();
+                            wrap.classList.add('modal-chats__results__delete')
+                            
+                            const templateStr =
+                            `<button>del</button>
+                            <span>${user.login}</span>`
+
+                            wrap.innerHTML = templateStr;
+
+                            elemTarget.append(wrap);
+                        })
+                    } else if (elemTarget) {
+                        elemTarget.innerHTML += 'ты здесь один'
+                    }
+                })
         });
         // this.kids.inputImg = new Input({
         //     type: this.props.inputImg.type,
