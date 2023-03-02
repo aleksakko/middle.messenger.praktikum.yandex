@@ -36,12 +36,14 @@ const mapStateToProps = function (this: any, state: Record<string, any>) {
         const elemAvatar = this.kids.form.kids.avaStatic0.element.parentNode;
         if (avatar.base64img/*  && data?.avatar === avatar.url */) {
             elemAvatar.style.backgroundImage = `url('${avatar.base64img}')`;
+            elemAvatar.style.backgroundSize = 'cover';
         }
 
         if (data?.avatar) {
             if (!avatar.url || (avatar.url && avatar.url !== data?.avatar)) {
                 httpData(`https://ya-praktikum.tech/api/v2/resources${data?.avatar}`, (result) => {
                     elemAvatar.style.backgroundImage = `url(${result})`;
+                    elemAvatar.style.backgroundSize = 'cover';
                     store.set('avatar', {base64img: result, url: data?.avatar});
                 })
             }

@@ -15,7 +15,7 @@ class Store extends EventBus {
 
     public set(keypath: string, data: unknown) {
         set(this.state, keypath, data);
-        console.log('ADD IN STORE: ', keypath, data);
+        console.log('STORE:ADD ', keypath, data);
 
         if (keypath.includes('error')) console.log('set error')
         this.emit(StoreEvents.UPDATED, this.getState());
@@ -26,11 +26,18 @@ class Store extends EventBus {
         arr.forEach(one => {
             obj = set(obj, one[0], one[1])
         })
-        console.log(obj);
-        console.log('ADD IN STORE: ', obj);
+        console.log('STORE:ADD ', obj);
 
-        //this.emit(StoreEvents.UPDATED, this.getState());
+        this.emit(StoreEvents.UPDATED, this.getState());
     }
+
+    public remove(keypath: string) {
+        set(this.state, keypath, undefined);
+        console.log('STORE:DELETE ', keypath);
+
+        this.emit(StoreEvents.UPDATED, this.getState());
+    }
+
 
     public getState() {
         return this.state;

@@ -1,6 +1,7 @@
 import BaseAPI from "./BaseAPI";
 
 export default class ChatsAPI extends BaseAPI {
+    
     constructor() {
         super('/chats');
     }
@@ -33,6 +34,10 @@ export default class ChatsAPI extends BaseAPI {
     // add users to chat
     public addUsersToChat(userData: apiReqUsersChat): Promise<apiUser> {
         return this.http.put('/users', userData);
+    }
+
+    public getChatToken(chatId: number): Promise<{ token: string }> {
+        return this.http.post(`/token/${chatId}`);
     }
 
     update = undefined;

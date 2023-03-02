@@ -4,16 +4,23 @@
 @include font-face("PTMonoBold", "../static/fonts/PTM75F_W");
 @include font-face("PTMonoRegular", "../static/fonts/PTM55F_W");
 
+// БАЗОВЫЙ ЦВЕТ --------
+$base-color-r: 56;
+$base-color-g: 6;
+$base-color-b: 80;
+
+// используемые цвета в проекте ---------
 $col-light: rgb(238 227 179);
-$col-shadow: rgb(56 6 80);
-$col-shadow10: rgba(56 6 80 / 10%);
-$col-shadow20: rgba(56 6 80 / 20%);
-$col-shadow30: rgba(56 6 80 / 30%);
-$col-shadow50: rgba(56 6 80 / 50%);
-$col-shadow80: rgba(56 6 80 / 80%);
-$col-shadow90: rgba(56 6 80 / 90%);
+$col-shadow: rgb($base-color-r, $base-color-g, $base-color-b);
+$col-shadow10: rgba($base-color-r, $base-color-g, $base-color-b, 10%);
+$col-shadow20: rgba($base-color-r, $base-color-g, $base-color-b, 20%);
+$col-shadow30: rgba($base-color-r, $base-color-g, $base-color-b, 30%);
+$col-shadow50: rgba($base-color-r, $base-color-g, $base-color-b, 50%);
+$col-shadow80: rgba($base-color-r, $base-color-g, $base-color-b, 80%);
+$col-shadow90: rgba($base-color-r, $base-color-g, $base-color-b, 90%);
 $col-shadow-dark: rgb(51 3 73);
 $col-error-red: rgb(145 0 36);
+$col-modal-bg: rgba(0 0 0 / 10%);
 $size-ava: 100px;
 
 body {
@@ -234,11 +241,11 @@ body .avatar {
         margin-top: calc(-150vh + 1px);
         background-clip: padding-box;
 
-        @include bg-repeat(-45deg, transparent, $col-shadow30, 5, 3.75);
+        @include bg-repeat(-45deg, $col-shadow30, $col-shadow30, 5, 3.75);
     }
 
     &:hover > .modal-bg-avatar {
-        @include bg-repeat(-45deg, transparent, $col-shadow30, 5, 3.75);
+        @include bg-repeat(-45deg, $col-shadow30, $col-shadow30, 5, 3.75);
     }
 }
 
@@ -520,7 +527,7 @@ body .avatar {
     position: absolute;
     width: calc(100%);
     height: 85vh;
-    background-color: rgba(0 0 0 / 10%);
+    background-color: $col-modal-bg;
 }
 
 .modal {

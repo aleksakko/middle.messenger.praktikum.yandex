@@ -1,9 +1,10 @@
 import ChatsAPI from "../api/ChatsAPI";
-import store, { StoreEvents } from "../Store";
-import UsersController from "./UsersController";
+import store from "../Store";
 
 class ChatsController {
     private api = new ChatsAPI;
+    public socket!: WebSocket;
+    private goPingPong!: number;
 
     async req<T>(req: () => Promise<T>) {
         store.set('user.isLoading', true);
@@ -19,6 +20,7 @@ class ChatsController {
         } catch (e: unknown) {
             console.log('request catch')
 
+            alert(e);
             store.set('user.error', e);
         } finally {
             console.log('request finally');
@@ -61,7 +63,6 @@ class ChatsController {
             const chats: apiChats[] = queryObj ? 
                 await this.api.read(queryObj) : 
                 await this.api.read();
-
             store.set('chats', chats)
             const chatsUsers: apiChatUser[][] = []
             for (const chat of chats) {
@@ -76,22 +77,23 @@ class ChatsController {
         }
     }
 
-    async createChat(title: string): Promise<apiResCreateChat> {
+    async createChat(title: string): Promise<apiResCreateChat | any> {
         console.log('------------createChat start')
-        const res = <apiResCreateChat>await this.req(async () => {
+        const res = await this.req(async () => {
             try {
                 const res = await this.api.create(title);
                 const chat = { id: res.id, title };
                 
-                const chats = store.getState().chats ?? [];
+                const chats = store.getState().chats ?? new Array(0);
+                console.log();
                 chats.unshift(chat);
 
                 store.set('chats', chats);
 
                 if (chat) return chat;
-            } catch (e) {
+            } catch (e: any) {
                 console.log(e);
-                return e;
+                throw new Error(e.reason ?? e.message)
             }
         })
         return res;
@@ -99,20 +101,24 @@ class ChatsController {
 
     async deleteChat(idChat: number) {
         console.log('------------deleteChat start')
-        await this.req(async () => {
+        const res = await this.req(async () => {
             try {
                 const res = await this.api.deleteChat(idChat);
-                console.log(res);
-
+                console.log('чат', store.getState().chats, idChat);
                 const index = store.getState().chats.findIndex(
-                    (chat: Record<string, any>) => chat.id === res.result.id
+                    (chat: Record<string, any>) => {
+                        if (!chat) return false;
+                            else return chat.id === res.result.id
+                    }
                 );
                 if (index !== -1) store.getState().chats[index] = null;
-                store.emit(StoreEvents.UPDATED, store.getState());
-            } catch (e) {
+                return 1;
+            } catch (e: any) {
                 console.log(e);
+                throw new Error(e.reason ?? e.message)
             }
         })
+        return res;
     }
 
     async deleteUsersFromChat(usersData: apiReqUsersChat) {
@@ -146,45 +152,114 @@ class ChatsController {
         })
         return res;
     }
+
+
+    async openChat(chatId: number): Promise<any> {
+        try {
+            this.closeChat();
+            await this.getUsers(chatId)
+            
+            const res = await this.api.getChatToken(chatId);
+            store.set('socket.activeChatId', chatId);
+            
+            
+            const userId = store.getState().user.data.id;
+            const token = res.token;
+            this.socket = new WebSocket(`wss://ya-praktikum.tech/ws/chats/${userId}/${chatId}/${token}`);
+            
+            this.socket.addEventListener('open', async () => {
+                this.goPingPong = setInterval(() => {
+                    this.socket.send(JSON.stringify({type: "ping"}))
+                }, 15000)
+
+                console.log(`WEBSOCKET: соединение установлено [чат ${chatId}]`);
+                store.remove('socket.messages');
+
+                this.loadLastMessages();
+                // await this.getChats();
+            })
+
+            this.socket.addEventListener('close', e => {
+                this.goPingPong && clearInterval(this.goPingPong);
+                store.remove('socket.messages');
+                console.log('PING PONG', this.goPingPong);
+                if (e.wasClean) console.log(`WEBSOCKET соединение закрыто [чат ${chatId}]`)
+                    else {
+                        console.log(`WEBSOCKET: срыв соединения [чат ${chatId}]. Переподключение.`);
+                        this.openChat(chatId);
+                    }
+            })
+
+            this.socket.addEventListener('message', e => {
+                store.set('socketCheckUpdate', false)
+                store.remove('socket.msgType')
+                console.log(e)
+                const data: apiDataWebSocket[] | apiDataWebSocket = JSON.parse(e.data);
+                let maxMsgId = 0;
+                
+                // если грузятся еще непрочитанные сообщения
+                if (data instanceof Array) {
+                    const arrUnreadMsgs: apiDataWebSocket[] = [];
+                    if (data.length !== 0) {
+                        for (const msg of data) {
+                            if (msg.type === 'message') {
+                                arrUnreadMsgs.push(msg);
+                            }
+                        }
+                        store.set('socket.messages', arrUnreadMsgs);
+                        store.set('socket.msgType', 'unread')
+                        store.set('socketCheckUpdate', true);
+                        if (maxMsgId < data[data.length - 1].id) maxMsgId = data[data.length - 1].id;
+                    }
+                    if (data.length === 20) this.loadLastMessages(maxMsgId);
+                } else 
+                // иначе новое сообщение или сообщение пользователя
+                if (data.type === 'message') {
+                    store.set('socket.messages', [data]);
+                    store.set('socket.msgType', 'new')
+                    store.set('socketCheckUpdate', true);
+                }
+            })
+
+            this.socket.addEventListener('error', () => {
+                console.log('websocket error')
+            })
+        } catch (e) {
+            console.log('error', e)
+        }
+    }
+    
+    async loadLastMessages(offset = 0/* , chatId */) {
+        // const chatId = // получить текущий айдичата
+        if (/* chatId > 0 &&  */this.socket) {
+            this.socket.send(JSON.stringify({
+                content: offset.toString(),
+                type: "get old"
+            }))
+        }
+    }
+
+    async sendNewMessage(text: string) {
+        // const chatId = // получить текущий айдичата
+        this.socket &&
+            this.socket.send(JSON.stringify({
+                content: text,
+                type: 'message'
+            }))        
+    }
+
+    closeChat() {
+		store.set('socketCheckUpdate', false);
+		store.remove('socket.activeChatId');
+		store.remove('socket.messages');
+		store.remove('socket.msgType');
+		//store.remove('currentChatUsers');
+		this.closeWebSocket();
+	}
+
+    closeWebSocket() {
+		this.socket && this.socket.close();
+	}
 }
 
 export default new ChatsController();
-        // подготовительная работа с чатами..
-
-        // async getsChats() {
-        //     const chats = await this.api.read();
-
-        //     store.set('chats', chats);
-        // }
-
-        // async selectChat(id: number) {
-        //     store.set('selectedChat', id);
-
-        //     createConnection(); // создать подключение по websocket
-        // }
-        // пример вложенности. если пользователь обновил какие-то данные, можно сделать 
-        // оптимистичные апдейты..чтобы пользователь сразу видел изменеие: пример:
-        // async updateUsername(username: string) {
-        //     const { username: oldUsername } = store.getState().user; // получить старый username из store
-            
-        //     store.set('user.username', username) // потом помещаем новый (пользователь сразу видит)
-
-        //     const result = await this.api.update({ username }); // потом метод api для обновления на сервере
-
-        //     if (!result) { // если результат на сервере неуспешный, то
-        //         store.set('user.username', oldUsername); // возвращаем в состояние старый username
-        //         // показать пользователю, что произошла ошибка, попробуйте еще раз
-        //     }
-        // }
-
-
-//     async getUser() {
-//         try {
-//             const user: apiUser = await this.api.read();
-
-//             store.set('user', user);
-//         } catch (e) {
-//             alert('Ошибка при получении пользователя');
-//         }
-//     }
-// }
