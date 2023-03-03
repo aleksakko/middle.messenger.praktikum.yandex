@@ -166,7 +166,7 @@ export class ChatsPageBase extends Block {
         function getChats(this: ChatsPageBase) {
             ChatsController.getChats()
                 .then(() => {
-                    const chats: Record<string, any>[] = store.getState().chats;
+                    const chats: apiChats[] = store.getState().chats;
                     if (chats) {
                         console.log(chats);
                         // компиляция шаблона и данных каждого элемента списка в массив и отправка его пропсами Инстансу

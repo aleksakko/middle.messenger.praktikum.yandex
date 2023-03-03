@@ -18,7 +18,7 @@ export default class ChatsAPI extends BaseAPI {
     
     // create chat
     public create(title: string): Promise<{ id: number }> {
-        return this.http.post('', { title });        
+        return this.http.post('', { title });
     }
 
     // delete chat by ID
