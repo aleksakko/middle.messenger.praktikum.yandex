@@ -86,7 +86,8 @@ class ChatsController {
                 
                 const chats = store.getState().chats ?? new Array(0);
                 console.log();
-                chats.unshift(chat);
+                if (chats.unshift) chats.unshift(chat)
+                 else chats.push(chat);
 
                 store.set('chats', chats);
 
