@@ -26,8 +26,8 @@ export class ChatsPageBase extends Block {
         CLICK_ADD_USER: 'click:add-user',
         CLICK_DELETE_USER: 'click:delete-user'
     }
-    // private CHATSDATA_msg_arch!: string[][];
-    private CHATSDATA_msg_unread!: apiDataWebSocket[][];
+    private CHATSDATA_msg_new!: Record<string, apiDataWebSocket[]>;
+    private CHATSDATA_msg_unread!: Record<string, apiDataWebSocket[]>;
     
     constructor (props: ChatsPageProps) {
         super('main', props);
@@ -120,8 +120,8 @@ export class ChatsPageBase extends Block {
 
         const CHATSDATA_Compile: string[] = []; // здесь будут компилированные шаблоны DOM после шаблонизатора
         const CHATSDATA_Id: number[] = []; // здесь будут массив данных чата в таком же порядке
-        //this.CHATSDATA_msg_arch = [];
-        this.CHATSDATA_msg_unread = [];
+        this.CHATSDATA_msg_new = {};
+        this.CHATSDATA_msg_unread = {};
 
         this.kids.addChat = new Button({
             type: 'button',
@@ -142,6 +142,7 @@ export class ChatsPageBase extends Block {
                                 title: res.title
                             }
                             this.CHATSDATA_msg_unread[res.id] = [];
+                            this.CHATSDATA_msg_new[res.id] = [];
                             
                             CHATSDATA_Compile.unshift( Handlebars.compile(tagsModel)(dataNewElem) );
                             CHATSDATA_Id.unshift(dataNewElem.id);
@@ -175,6 +176,7 @@ export class ChatsPageBase extends Block {
                             // объект с кешем чатов
                             // инициализируем на каждый чат пустой массив (для будущих сообщений)
                             this.CHATSDATA_msg_unread[chat.id] = [];
+                            this.CHATSDATA_msg_new[chat.id] = [];
                         })
                         return chats;
                     } else {
@@ -207,9 +209,12 @@ export class ChatsPageBase extends Block {
     dataChatManipulate() {
         let checkHideStub = false,
             checkHideThisChat = true;
-        // инициализация исохранение в замыкании - объект с кэшем чатов в форме {id: тэг <template> с детьми}
+        
+            // инициализация исохранение в замыкании - объект с кэшем чатов в форме {id: тэг <template> с детьми}
         // для эффективного DOM неиспользуемые ветви чатов будут здесь, а используемая будет отсюда доставаться
         const chatIdTemplate: Record<string, HTMLTemplateElement> = {};
+        const chatIdCounter: Record<string, number> = {}; // счетчик, помогающий на каждый chatId считать количество сообщений
+       
         let prevChatId: number;
         let activeChatId: number;
         let lastMessageObject: apiDataWebSocket;
@@ -218,42 +223,46 @@ export class ChatsPageBase extends Block {
         store.on(StoreEvents.UPDATED, state => {
 
             if (state.socketCheckUpdate && state.socket?.messages) {
-                
-                console.log(state.socketCheckUpdate);
-                console.log(state.socket.messages[0].id);
-                console.log(state.socket.msgType);
 
                 activeChatId = state.socket.activeChatId;
-                console.log(activeChatId)
-                
+                console.log(isEqual(lastMessageObject, state.socket.messages[0]))
+
                 if (state.socket.msgType === 'unread') {
                     for (const msg of state.socket.messages) {
                         this.CHATSDATA_msg_unread[activeChatId].push(msg);
                     }
+                    if (!isEqual(lastMessageObject, state.socket.messages[0]))
+                        this.eventBus().emit(ChatsPageBase.TODO.CLICK_GET_CHAT_ID, activeChatId, state.socket.msgType)
+                    lastMessageObject = this.CHATSDATA_msg_unread[activeChatId][0];
+                    
                 } else if (state.socket.msgType === 'new') {
-                    this.CHATSDATA_msg_unread[activeChatId].unshift(state.socket.messages[0])
+                    this.CHATSDATA_msg_new[activeChatId].push(state.socket.messages[0])
+                    lastMessageObject = this.CHATSDATA_msg_new[activeChatId][this.CHATSDATA_msg_new[activeChatId].length - 1];
+                    this.eventBus().emit(ChatsPageBase.TODO.CLICK_GET_CHAT_ID, activeChatId, state.socket.msgType)
                 }
 
-                lastMessageObject = this.CHATSDATA_msg_unread[activeChatId][0];
                 // перебираем сообщения в обратную сторону
                 // for (let i = state.socket.messages.length - 1; i >= 0; i--) {
                 // this.CHATSDATA[activeChatId].push(state.socket.messages[i].content);
                 // }
-
-                this.eventBus().emit(ChatsPageBase.TODO.CLICK_GET_CHAT_ID, activeChatId, 1)
             }
         })
         // ------------------------------------------------------
         /* используем здешний eventBus для отслеживания клика по чату из списка и
         изменения данных активного окна (.this-chat)
         подписка на событие "Клик по чату из навигационного списка и получение его id" */
-        this.eventBus().on(ChatsPageBase.TODO.CLICK_GET_CHAT_ID, (chatId: number, checkUp = 0) => {
-            // checkUp = 0, значит инициализация
-            // checkUp = 1, значит получаем непрочитанные сообщения или новые сообщения
-            // checkUp = 2, значит новых сообщений нет (происходит при переходе на этот чат с другого)
+        this.eventBus().on(ChatsPageBase.TODO.CLICK_GET_CHAT_ID, (chatId: number, type = '') => {
+            // type = '', значит инициализация
+            // type = 'from' - переход на этот чат с другого
+            // type = 'unread', значит получаем непрочитанные сообщения
+            // type = 'new', значит получаем новые сообщения
 
-            alert(checkUp);
-            console.log(this.CHATSDATA_msg_unread[chatId]);
+            // if (!checkUp) {
+            //     this.CHATSDATA_msg_unread[chatId].length = 0;
+            //     this.CHATSDATA_msg_new[chatId].length = 0;
+            // }
+            // alert(checkUp);
+            // console.log(this.CHATSDATA_msg_new[chatId]);
 
             activeChatId = chatId;
             
@@ -284,29 +293,90 @@ export class ChatsPageBase extends Block {
 
             // ---------- логика - замена данных выбранного чата кэшем, если они есть + вебсокет
             // иначе получаем новые с сервера (ДОПисать получение сообщений, открытие вебсокета)            
-            const checkTemp = chatIdTemplate[chatId] ? true : false;
-            const temp = checkTemp ? chatIdTemplate[chatId] : document.createElement('template');
+            // const checkTemp = chatIdTemplate[chatId] ? true : false;
+            // const temp = checkTemp ? chatIdTemplate[chatId] : document.createElement('template');
 
-            if (!checkTemp) {
-                this.CHATSDATA_msg_unread[chatId].forEach((msg: apiDataWebSocket) => {
-                    const spanEl = document.createElement('SPAN');
-                    spanEl.classList.add('msg');
-                    spanEl.textContent = msg.content;
-                    temp.content.append(spanEl);
-                });
-                chatIdTemplate[chatId] = temp; // добавляем шаблон в кэш-template объект
-            }            
+           
+
+            const temp = chatIdTemplate[chatId] ?? document.createElement('template');
+            if (type === 'unread') {                
+                !chatIdCounter[chatId] && (chatIdCounter[chatId] = 0)
+                const counter = chatIdCounter[chatId] - this.CHATSDATA_msg_new[chatId].length;
+                console.log(counter);
+                const messages = this.CHATSDATA_msg_unread[chatId];
+                console.log(messages)
+                console.log(chatIdCounter[chatId], this.CHATSDATA_msg_new)
+                if (counter < messages.length) {
+                    for (let i = counter - 1; i <= messages.length; i++) {
+                        
+                        const spanEl = document.createElement('SPAN');
+                        spanEl.classList.add('msg');
+                        spanEl.textContent = messages[i]?.content;
+                        temp.content.prepend(spanEl);
+                        const spanEltime = document.createElement('SPAN');
+                        spanEltime.classList.add('msg-time');
+                        const timeString = messages[i]?.time;
+                        const date = new Date(timeString);
+                        spanEltime.textContent = date.toLocaleString();
+                        temp.content.prepend(spanEltime);
+                        chatIdCounter[chatId]++;
+
+                    }
+                    chatIdCounter[chatId] += this.CHATSDATA_msg_new[chatId].length;
+                    chatIdTemplate[chatId] = temp; // добавляем шаблон в кэш-template объект
+                }
+            }
+
+            if (type === 'new') {  
+                
+                const spanEl = document.createElement('SPAN');
+                spanEl.classList.add('msg');
+                spanEl.textContent = this.CHATSDATA_msg_new[chatId][this.CHATSDATA_msg_new[chatId].length - 1]?.content;
+                temp.content.append(spanEl);                        
+                chatIdCounter[chatId]++;
+
+                chatIdTemplate[chatId] = temp;
+
+                // !chatIdCounter[chatId] && (chatIdCounter[chatId] = 0)
+                // const counter = chatIdCounter[chatId] - this.CHATSDATA_msg_unread[chatId].length;
+                // const messages = this.CHATSDATA_msg_new[chatId];
+                // if (counter < messages.length) {
+                //     for (let i = counter; i <= messages.length; i++) {
+                        
+                //         const spanEl = document.createElement('SPAN');
+                //         spanEl.classList.add('msg');
+                //         spanEl.textContent = messages[i]?.content;
+                //         temp.content.append(spanEl);                        
+                //         chatIdCounter[chatId]++;
+
+                //     }
+                //     chatIdTemplate[chatId] = temp; // добавляем шаблон в кэш-template объект
+            //     }
+            }
+            
+            // if (!checkTemp) {    
+            //     this.CHATSDATA_msg_unread[chatId].forEach((msg: apiDataWebSocket) => {
+            //         const spanEl = document.createElement('SPAN');
+            //         spanEl.classList.add('msg');
+            //         spanEl.textContent = msg.content;
+            //         temp.content.append(spanEl);
+            //         counter++;
+            //     });
+            //     chatIdTemplate[chatId] = temp; // добавляем шаблон в кэш-template объект
+            // }            
             
             // если раньше был открыт чат, то переносим html-детей обратно в кэш-template объект перед очисткой (textContent = '')
-            if (prevChatId) {
-                chatIdTemplate[prevChatId].content.replaceChildren(...Array.from(elemChat.children));
+            if (prevChatId && prevChatId !== chatId) {
+                chatIdTemplate[prevChatId]?.content.replaceChildren(...Array.from(elemChat.children));
             }
             prevChatId = chatId;
             
             // очищаем и меняем родителя на реальный элемент .this-chat - новый контент появляется моментально
             // (в кэше остается одинокий элемент template)
-            elemChat.textContent = '';
-            elemChat.replaceChildren(...Array.from(temp.content.children));
+            const elem = document.createElement('div');
+            elem.replaceChildren(...Array.from(elemChat.children));
+            if (type === 'new') elemChat.replaceChildren(...Array.from(elem.children), ...Array.from(temp.content.children))
+                else elemChat.replaceChildren(...Array.from(temp.content.children), ...Array.from(elem.children))
             
             elemChat.dataset.id = chatId.toString();
             elemChat.scrollTop = elemChat.scrollHeight;
@@ -319,18 +389,22 @@ export class ChatsPageBase extends Block {
 
             ChatsController.sendNewMessage(msg);
             
-            const elemChat = document.querySelector('.this-chat') as HTMLElement;
-            const spanEl = document.createElement('SPAN');
-            spanEl.classList.add('msg');
-            spanEl.textContent = msg;
-            elemChat.append(spanEl);
+            // const elemChat = document.querySelector('.this-chat') as HTMLElement;
+            // const spanEl = document.createElement('SPAN');
+            // spanEl.classList.add('msg');
+            // spanEl.textContent = msg;
+            // elemChat.append(spanEl);
 
-            elemChat.scrollTop = elemChat.scrollHeight;
+            // elemChat.scrollTop = elemChat.scrollHeight;
         })
 
         // --------------------------------------------
         this.eventBus().on(ChatsPageBase.TODO.CLICK_DELETE_CHAT, (id, chatId) => {
             delete this.CHATSDATA_msg_unread[chatId];
+            delete this.CHATSDATA_msg_new[chatId];
+            delete chatIdTemplate[chatId];
+            delete chatIdCounter[chatId];
+            (document.querySelector('.this-chat') as HTMLElement).textContent = '';
             id;
         })
 

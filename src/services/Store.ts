@@ -45,6 +45,6 @@ class Store extends EventBus {
 }
 
 const store = new Store();
-window.st = store;
+// window.st = store; // для теста
 
 export default store;
