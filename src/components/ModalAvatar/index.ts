@@ -3,7 +3,6 @@ import Block from '../../utils/Block';
 import Input from '../Input';
 import Button from '../Button';
 import UsersController from '../../services/controllers/UsersController';
-import store from '../../services/Store';
 
 interface ModalAvatarProps {
     [key: string]: any;

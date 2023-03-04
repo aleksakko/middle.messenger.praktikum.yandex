@@ -49,6 +49,7 @@ class ChatsController {
                 await this.api.readUsers(id ,queryObj) : 
                 await this.api.readUsers(id);
             
+            store.set(`chatsUsers.${id}`, users);
             return users;
         } catch (e) {
             console.error(e);
@@ -128,7 +129,7 @@ class ChatsController {
             try {
                 await this.api.deleteUsersFromChat(usersData)
 
-                // удалить пользователей из чата в сторе
+                // удалить пользователей из чата в сторе по аналогии с добавлением
             } catch (e) {
                 console.log(e);
             }
@@ -146,6 +147,7 @@ class ChatsController {
                 
                 console.log(chatUsers);
                 
+                store.set(`chatsUsers.${usersData.chatId}`, chatUsers);
                 return chatUsers;
             } catch (e) {
                 console.log(e);
@@ -162,8 +164,7 @@ class ChatsController {
             
             const res = await this.api.getChatToken(chatId);
             store.set('socket.activeChatId', chatId);
-            
-            
+                        
             const userId = store.getState().user.data.id;
             const token = res.token;
             this.socket = new WebSocket(`wss://ya-praktikum.tech/ws/chats/${userId}/${chatId}/${token}`);
@@ -177,7 +178,6 @@ class ChatsController {
                 store.remove('socket.messages');
 
                 this.loadLastMessages();
-                // await this.getChats();
             })
 
             this.socket.addEventListener('close', e => {
@@ -187,7 +187,9 @@ class ChatsController {
                 if (e.wasClean) console.log(`WEBSOCKET соединение закрыто [чат ${chatId}]`)
                     else {
                         console.log(`WEBSOCKET: срыв соединения [чат ${chatId}]. Переподключение.`);
-                        this.openChat(chatId);
+                        setTimeout(() => {
+                            this.openChat(chatId);
+                        }, 500)
                     }
             })
 
@@ -207,6 +209,7 @@ class ChatsController {
                                 arrUnreadMsgs.push(msg);
                             }
                         }
+                        // console.log(arrUnreadMsgs);
                         store.set('socket.messages', arrUnreadMsgs);
                         store.set('socket.msgType', 'unread')
                         store.set('socketCheckUpdate', true);
@@ -219,6 +222,7 @@ class ChatsController {
                     store.set('socket.messages', [data]);
                     store.set('socket.msgType', 'new')
                     store.set('socketCheckUpdate', true);
+                    console.log(data)
                 }
             })
 
@@ -230,9 +234,8 @@ class ChatsController {
         }
     }
     
-    async loadLastMessages(offset = 0/* , chatId */) {
-        // const chatId = // получить текущий айдичата
-        if (/* chatId > 0 &&  */this.socket) {
+    async loadLastMessages(offset = 0) {
+        if (this.socket) {
             this.socket.send(JSON.stringify({
                 content: offset.toString(),
                 type: "get old"
@@ -241,7 +244,6 @@ class ChatsController {
     }
 
     async sendNewMessage(text: string) {
-        // const chatId = // получить текущий айдичата
         this.socket &&
             this.socket.send(JSON.stringify({
                 content: text,
@@ -251,10 +253,7 @@ class ChatsController {
 
     closeChat() {
 		store.set('socketCheckUpdate', false);
-		store.remove('socket.activeChatId');
-		store.remove('socket.messages');
-		store.remove('socket.msgType');
-		//store.remove('currentChatUsers');
+		store.remove('socket');
 		this.closeWebSocket();
 	}
 

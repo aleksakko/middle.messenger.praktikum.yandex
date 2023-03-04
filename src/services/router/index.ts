@@ -118,7 +118,7 @@ class Router {
 const router = new Router('#app');
 
 router
-    .use(Routes.Main, MainPage, { title: 'messenger' })
+    .use(Routes.Main, MainPage, { title: 'Test' })
     .use(Routes.Auth, AuthPage, { title: 'Авторизация' })
     .use(Routes.Reg, RegPage, { title: 'Регистрация' })
     .use(Routes.Messenger, ChatsPage, { title: 'Чаты' })

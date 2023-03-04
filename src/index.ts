@@ -3,20 +3,30 @@ import './index.scss';
 // создано несколько хелперов для handlebars
 import './utils/handlebarsHelpers.ts';
 
-// старый роутер
-// import goRouter from './router';
-//goRouter();
-
 import AuthController from './services/controllers/AuthController';
-import router from './services/router';
+import router, { Routes } from './services/router';
+
 
 window.addEventListener('DOMContentLoaded', async () => {
+    
+    let isProtectedRoute = true;
+
+    switch (window.location.pathname) {
+        case Routes.Auth:
+        case Routes.Reg: isProtectedRoute = false; break;
+    }
+
     try {
         await AuthController.getUser();
+
+        if (!isProtectedRoute) {
+            router.go(Routes.Profile)
+        }
 
         router.start();
     } catch (err) {
         router.start();
+
+        isProtectedRoute && router.go(Routes.Auth)
     }
 })
-

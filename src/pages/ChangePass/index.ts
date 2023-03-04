@@ -2,7 +2,6 @@ import template from './changePass.hbs';
 import Block from '../../utils/Block';
 import Form from '../../components/Form';
 import ChangePassPageParam from './changePassParam';
-import isEqual from '../../utils/isEqual';
 import withStore from '../../services/withStore';
 import httpData from '../../utils/httpData';
 import store from '../../services/Store';
@@ -34,7 +33,7 @@ const mapStateToProps = function (this: any, state: Record<string, any>) {
 
         const avatar = state.avatar ?? {};
         const elemAvatar = this.kids.form.kids.avaStatic0.element.parentNode;
-        if (avatar.base64img/*  && data?.avatar === avatar.url */) {
+        if (avatar.base64img) {
             elemAvatar.style.backgroundImage = `url('${avatar.base64img}')`;
             elemAvatar.style.backgroundSize = 'cover';
         }

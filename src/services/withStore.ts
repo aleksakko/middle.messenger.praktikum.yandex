@@ -1,17 +1,18 @@
 import Block from "../utils/Block";
 import isEqual from "../utils/isEqual";
-import store, { StoreEvents } from "./Store";
+import store, { StoreEvents, State } from "./Store";
 
-export default function withStore(mapStateToProps: (state: any) => any) {
+
+export default function withStore(mapStateToProps: (state: State) => State | null) {
     
     return function wrap(Component: new (props?: any) => Block) {
 
-        let currentState: Record<string, any> | null = null;
+        let currentState: State | null = null;
         
         return class WithStore extends Component {
             
-            constructor(props: Record<string, any>) {
-                const state: Record<string, any> = store.getState();
+            constructor(props: State) {
+                const state = store.getState();
                 currentState = mapStateToProps.call('THIS', state); // user.data..
                 
                 super({ ...props, ...currentState });
@@ -28,7 +29,7 @@ export default function withStore(mapStateToProps: (state: any) => any) {
                     }
 
                     // если mapStateToProps всегда возвращает null, то isEqual не пройдет
-                    // т.е. отключаем setProps здесь, и можно вызвать желаемый set Props внутри mapStateToProps
+                    // т.е. можно отключить setProps здесь, и можно вызвать желаемый set Props внутри mapStateToProps
                     this.setProps({ ...propsFromState });
                 })
             }

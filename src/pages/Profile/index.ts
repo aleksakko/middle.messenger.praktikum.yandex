@@ -87,7 +87,7 @@ class ProfilePageBase extends Block {
             className: ['profile-cont'],
             childClassName: 'profile-cont__field',
             ProfilePageParam: ProfilePageParam,
-            modalAvatar: true // указывает, что нужно модальное окно установки аватара
+            modalAvatar: true // указывает, что нужно будет создать модальное окно установки аватара
         });
         this.element.classList.add('wrap');
     }
@@ -108,15 +108,13 @@ const mapStateToProps = function (this: any, state: Record<string, any>) {
     if (this.kids != undefined) {
         
         if (!isEqual(oldData, data)) {
-            const arrElems = document.getElementsByClassName('profile-cont__field');
-            setTimeout(() => {
-                arrElems[1].children[1].textContent = data?.email;
-                arrElems[2].children[1].textContent = data?.login
-                arrElems[3].children[1].textContent = data?.first_name
-                arrElems[4].children[1].textContent = data?.second_name
-                arrElems[5].children[1].textContent = data?.display_name
-                arrElems[6].children[1].textContent = data?.phone
-            }, 30)
+            const parent = this.kids.sectionWith.element;
+            parent.children[2].children[1].textContent = data?.email;
+            parent.children[3].children[1].textContent = data?.login
+            parent.children[4].children[1].textContent = data?.first_name
+            parent.children[5].children[1].textContent = data?.second_name
+            parent.children[6].children[1].textContent = data?.display_name
+            parent.children[7].children[1].textContent = data?.phone
         }
         
         // здесь кешируется изображение и лишний раз не меняется если в сторе оно уже есть
@@ -138,9 +136,9 @@ const mapStateToProps = function (this: any, state: Record<string, any>) {
         }
 
         oldData = Object.assign({}, data);
-        console.log('обновление', this.kids.sectionWith.creator);
+        // console.log('обновление', this.kids.sectionWith.creator);
     } else {
-        //console.log('мимо', this)
+        // console.log('мимо', this)
     }
     return null;    
 }

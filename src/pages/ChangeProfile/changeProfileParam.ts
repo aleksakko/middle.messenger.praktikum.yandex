@@ -54,7 +54,10 @@ const ChangeProfilePageParam = [
     {
         tag: 'a',
         href: '/profile',
-        label: 'назад к профилю'
+        label: 'назад к профилю',
+        dataApi: true,
+        todo: 'user/profile'
     }
 ];
+
 export default ChangeProfilePageParam;

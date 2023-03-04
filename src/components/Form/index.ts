@@ -8,6 +8,7 @@ import Alink from '../Alink';
 // !!!
 import AuthController from '../../services/controllers/AuthController';
 import UsersController from '../../services/controllers/UsersController';
+import router, { Routes } from '../../services/router';
 
 interface FormProps {
     [key: string]: unknown;
@@ -129,7 +130,15 @@ export default class Form extends Block {
                     class: prop.class,
                     dataApi: prop.dataApi,
                     events: {
-                        //click: (e: MouseEvent) => console.log(`clicked`, e.target)
+                        'click': () => {
+                            switch (prop.todo) {
+                                case 'user/profile': {
+                                    console.log('страница профиля');
+                                    router.go(Routes.Profile);
+                                    break;
+                                }
+                            }
+                        } 
                     }
                 })
             } else if (prop.tag === 'button') {

@@ -46,14 +46,13 @@ const mapStateToProps = function (this: any, state: Record<string, any>) {
         
         const avatar = state.avatar ?? {};
         const elemAvatar = this.kids.form.kids.avaStatic0.element.parentNode; 
-        if (avatar.base64img/*  && data?.avatar === avatar.url */) {
+        if (avatar.base64img) {
             elemAvatar.style.backgroundImage = `url('${avatar.base64img}')`;
             elemAvatar.style.backgroundSize = 'cover';
         }
 
         if (data?.avatar) {
             if (!avatar.url || (avatar.url && avatar.url !== data?.avatar)) { 
-                console.log('3333333333333333333', !avatar.url, avatar.url !== data?.avatar)
 
                 httpData(`https://ya-praktikum.tech/api/v2/resources${data?.avatar}`, (result) => {
                     elemAvatar.style.backgroundImage = `url(${result})`;

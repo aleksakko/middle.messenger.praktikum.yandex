@@ -36,6 +36,7 @@ export default class ChatsAPI extends BaseAPI {
         return this.http.put('/users', userData);
     }
 
+    // get token for websocket
     public getChatToken(chatId: number): Promise<{ token: string }> {
         return this.http.post(`/token/${chatId}`);
     }

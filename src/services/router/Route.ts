@@ -55,7 +55,7 @@ export default class Route {
         this.elTitle.textContent = 'SPA ' + this._title;
         if (this.elHeadTitle) this.elHeadTitle.textContent = this._title;
         if (this.elRoot !== null) this.elRoot.textContent = ''; // так может быть лучше, не будет висеть в DOM куча инстансов
-        this.elRoot?.append(this._block.getContent()) // вот так зато в app висит один объект
+        this.elRoot?.append(this._block.getContent()) // и в app висит один объект
         // this._block.show(); // если активно, то блок висит в DOM
     }
 }

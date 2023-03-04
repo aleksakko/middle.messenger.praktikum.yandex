@@ -12,9 +12,6 @@ type Options = {
     apiNameMethod?: string;
 }
 
-// type OptionsNoMethod = Omit<Options, 'method'>;
-// type HTTPMethod = ( url: string, options?: OptionsNoMethod) => Promise<XMLHttpRequest>
-
 function queryStringify(data: {[key in string]: unknown}): string {
 	return Object.keys(data)
         .map(key => key + '=' + data[key])
@@ -63,7 +60,7 @@ export default class HTTPTransport {
         });
     }
 
-    private request<Response>(url: string, options: Options = { method: METHODS.GET },): Promise<Response> {
+    private request<Response>(url: string, options: Options = { method: METHODS.GET }): Promise<Response> {
         const { method, data, apiNameMethod } = options;
     
         return new Promise((resolve, reject) => {

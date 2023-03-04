@@ -24,7 +24,6 @@ export default class MainPage extends Block {
         this.element.classList.add('wrap');
     }
 
-    // сюда передадутся пропсы, передаваемые при создании инстанса new MainPage({title: 'Главная'})
     render() {        
         return this.compile(template, { /* title: this.props.title */ })
     }
@@ -48,7 +47,7 @@ const alinkInfo = [
         label: 'профиль'
     },
     {
-        href: '/change-profile',
+        href: '/settings',
         label: 'смена профиля'
     },
     {

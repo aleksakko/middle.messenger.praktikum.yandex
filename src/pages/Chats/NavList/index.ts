@@ -21,7 +21,7 @@ export default class NavList extends Block {
     
     init() {
         this.iGlob = 0;
-        this.namesElementsOfNavList = []; // init важного массива, содержащий в нужном порядке названия элементов FieldLi... из this.kids
+        this.namesElementsOfNavList = []; // init важного массива, содержащий в нужном порядке названия элементов FieldLi... из this.kids для правильного render'а
         this.activeChatId = -1;
         
         this.element.classList.add(this.props.classNav);
@@ -59,8 +59,8 @@ export default class NavList extends Block {
                                 const users = [];
                                 if (chatUsers && usersElem) {
                                     for (const user of chatUsers) {
-                                        if (user.login === thisUser.login) 0
-                                            else users.push(user.login)
+                                        if (user.display_name === thisUser.display_name) 0
+                                            else users.push(user.display_name)
                                     }
                                     // временная вставка вариантов в предыдущего соседа - <span>
                                     (parent.parentElement as any).previousElementSibling.textContent
@@ -71,20 +71,6 @@ export default class NavList extends Block {
                                 }                                
                             })
                             .catch(e => console.error(e.message))
-                        
-                        //setTimeout(() => this.kids.modal.element.classList.add('hidden-vis'), 500);
-                        
-                        // this.props.chatsBus.emit(ChatsPageBase.TODO.CLICK_ADD_USER, this.activeChatId);
-
-                        // console.log(this.activeChatElem.querySelector('.users'));
-
-                        // const iChatInList = this.props.CHATSDATA_Id.indexOf(this.activeChatId);
-                        
-                        // const addUserId = parent?.dataset.id;
-                        
-                        
-                        // console.log('id чата: ', this.activeChatId)
-                        // console.log("id выбранного user'а ", +(parent.dataset.id as string))
                         
                     } else
 
@@ -107,8 +93,8 @@ export default class NavList extends Block {
                                         const users = [];
                                         if (chatUsers && usersElem) {
                                             for (const user of chatUsers) {
-                                                if (user.login === thisUser.login) 0
-                                                    else users.push(user.login)
+                                                if (user.display_name === thisUser.display_name) 0
+                                                    else users.push(user.display_name)
                                             }
 
                                             usersElem.textContent = users.join(' | ');
@@ -192,7 +178,9 @@ export default class NavList extends Block {
                             // --------------- ИНАЧЕ ЭТО ПРОСТО КЛИК - ЗНАЧИТ ПОКАЗ ОКНА С ПОДГРУЗКОЙ ТУДА ДАННЫХ
                             } else {
                                 
-                                ChatsController.openChat(chatId) // открываем новый сокет (старый автоматически закроется в методе)
+                                setTimeout(() => {
+                                    ChatsController.openChat(chatId) // открываем новый сокет (старый автоматически закроется в методе)
+                                }, 1000);
                                 this.props.chatsBus.emit(ChatsPageBase.TODO.CLICK_GET_CHAT_ID, chatId);
 
                             }
@@ -214,66 +202,4 @@ export default class NavList extends Block {
             arrNames: this.namesElementsOfNavList
         })
     }
-
-    
-    // render() {   
-
-    //     for (; this.iGlob < this.props.CHATSDATA_Compile.length; this.iGlob++) {
-
-    //         if (!this.namesElementsOfNavList.includes(`fieldLi${this.iGlob}`)) { // !!!
-                
-    //             const indexAddChat = this.props.checkAddChat ? 0 : this.iGlob; // если создание нового чата, то 0 для добавления из начала
-    //             // console.log('add chat', this.iGlob)
-                
-    //             this.kids[`fieldLi${this.iGlob}`] = new Block('li', {
-    //                 events: {
-    //                     click: (e: MouseEvent) => {
-    //                         const chatId = (e.currentTarget as HTMLLIElement).getAttribute('data-id');
-
-    //                         if ((e.target as HTMLButtonElement).classList.contains('delete-chat')
-    //                             /* && confirm('Здесь должно быть окошко с вопросом:\nУдалить?') */) {
-
-    //                             const iChat = this.props.CHATSDATA_Id.indexOf(chatId);
-    //                             const forNodeDelete = this.namesElementsOfNavList[iChat];
-                                    
-    //                             // console.log(this.props.CHATSDATA_Compile);
-    //                             // console.log(this.props.CHATSDATA_Id);
-    //                             // console.log(this.namesElementsOfNavList);
-                                    
-    //                             delete this.namesElementsOfNavList[iChat]; // сначала удаляем из важного
-    //                             delete this.props.CHATSDATA_Compile[iChat]; // затем данные полей
-    //                             delete this.props.CHATSDATA_Id[iChat]; // и наконец из chatId сопоставлений
-                                
-    //                             this.eventBus().emit('flow:render');
-                                
-    //                             this.props.chatsBus.emit(ChatsPageBase.TODO.CLICK_DELETE_CHAT, iChat, chatId);
-                                
-    //                             // запуск api удаления и если успешно то все ок удаляем до последнего
-    //                             delete this.kids[forNodeDelete];
-    //                             // если не успешно то надо как-то возвратить все обратно
-    //                             console.log(this.kids);
-    //                         } else {
-
-    //                             // если не удаляем, то эмитим событие и передаем chatId (родителю)
-    //                             this.props.chatsBus.emit(ChatsPageBase.TODO.CLICK_GET_CHAT_ID, chatId);
-
-    //                         }
-    //                     }
-    //                 }
-    //             });
-                
-    //             this.kids[`fieldLi${this.iGlob}`].element.innerHTML = this.props.CHATSDATA_Compile[indexAddChat];
-    //             this.kids[`fieldLi${this.iGlob}`].element.setAttribute('data-id', this.props.CHATSDATA_Id[indexAddChat]);
-                
-                
-    //             if (this.props.checkAddChat) this.namesElementsOfNavList.unshift(`fieldLi${this.iGlob}`)
-    //                 else this.namesElementsOfNavList.push(`fieldLi${this.iGlob}`) // если init render, то в конец
-    //         }
-
-    //     }
-
-    //     return this.compile(template, { 
-    //         arrNames: this.namesElementsOfNavList
-    //     })
-    // }
 }

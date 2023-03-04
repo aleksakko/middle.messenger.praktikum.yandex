@@ -19,6 +19,7 @@ $col-shadow50: rgba($base-color-r, $base-color-g, $base-color-b, 50%);
 $col-shadow80: rgba($base-color-r, $base-color-g, $base-color-b, 80%);
 $col-shadow90: rgba($base-color-r, $base-color-g, $base-color-b, 90%);
 $col-shadow-dark: rgb(51 3 73);
+$col-green: green;
 $col-error-red: rgb(145 0 36);
 $col-modal-bg: rgba(0 0 0 / 10%);
 $size-ava: 100px;
@@ -200,7 +201,7 @@ body a {
             box-sizing: border-box;
             width: 220px;
             border: none;
-            border-top: 2px solid green;
+            border-top: 2px solid $col-green;
             margin: 3px 0 5px;
             font-weight: bold;
         }
@@ -424,7 +425,7 @@ body .avatar {
                 }
 
                 &.active > .ava-chat {
-                    border: 1px solid $col-light;
+                    outline: 2px solid $col-shadow80;
                 }
             }
         }
@@ -455,11 +456,13 @@ body .avatar {
 
             .msg {
                 margin: 0 10px 5px;
+                border-bottom: 1px solid $col-shadow30;
             }
 
             .msg-time {
                 margin: 0 10px 5px;
                 font-size: 10px;
+                align-self: flex-start;
             }
 
             // этот класс нужно доработать (выравнивание по разным сторонам)

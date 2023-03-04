@@ -67,8 +67,10 @@ export default class ModalChats extends Block {
         this.props.chatsBus.on(ChatsPageBase.TODO.CLICK_ADD_USER, (/* idChat: number */) => {
             
             const elemTarget = document.getElementById('modal-chats__results');
-            if (elemTarget) elemTarget.innerHTML = '';
-            (elemTarget as any).previousElementSibling.textContent = '';
+            if (elemTarget) {
+                elemTarget.innerHTML = '';
+                (elemTarget.previousElementSibling as HTMLElement).textContent = '';
+            }
             
         });
 
@@ -76,8 +78,10 @@ export default class ModalChats extends Block {
         this.props.chatsBus.on(ChatsPageBase.TODO.CLICK_DELETE_USER, (idChat: number) => {
             
             const elemTarget = document.getElementById('modal-chats__results');
-            if (elemTarget) elemTarget.innerHTML = 'ЧАТНИКИ ЭТОЙ КОМНАТЫ:<br/><br/>';
-            (elemTarget as any).previousElementSibling.textContent = '';
+            if (elemTarget) {
+                elemTarget.innerHTML = 'ЧАТНИКИ ЭТОЙ КОМНАТЫ:<br/><br/>';
+                (elemTarget.previousElementSibling as HTMLElement).textContent = '';
+            }
          
             ChatsController.getUsers(idChat)
                 .then(users => {
@@ -88,7 +92,7 @@ export default class ModalChats extends Block {
 
                         users?.forEach(user => {
 
-                            if (user.login === thisUser.login) return;
+                            if (user.display_name === thisUser.display_name) return;
 
                             const wrap = document.createElement('div');
                             wrap.dataset.id = user.id.toString();
@@ -96,7 +100,7 @@ export default class ModalChats extends Block {
                             
                             const templateStr =
                             `<button>del</button>
-                            <span>${user.login}</span>`
+                            <span>${user.display_name}</span>`
 
                             wrap.innerHTML = templateStr;
 
@@ -107,18 +111,6 @@ export default class ModalChats extends Block {
                     }
                 })
         });
-        // this.kids.inputImg = new Input({
-        //     type: this.props.inputImg.type,
-        //     idName: this.props.inputImg.idName,
-        //     accept: "image/*"
-        // })
-
-        // this.kids.buttonSubmit = new Button({
-        //     label: this.props.buttonSubmit.label,
-        //     type: this.props.buttonSubmit.type,
-        //     idName: this.props.buttonSubmit.idName,
-        //     className: this.props.buttonSubmit.className
-        // })
 
         this.element.classList.add('wrap-modal', 'hidden-vis');
     }

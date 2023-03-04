@@ -154,10 +154,10 @@ export default class Block {
 
     private _componentDidUpdate(oldProps: Props, newProps: Props) {        
         if (this.componentDidUpdate(oldProps, newProps)) {
-            console.log(`CD_Update render ${this.element}`, newProps);
+            // console.log(`CD_Update render ${this.element}`, newProps);
             this.eventBus().emit(Block.EVENTS.FLOW_RENDER);
         } else {
-            console.log(`Отмена CD_Update render ${this.element}`, newProps);
+            // console.log(`Отмена CD_Update render ${this.element}`, newProps);
         }
     }
     // Переопределяется пользователем.

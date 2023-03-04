@@ -29,7 +29,6 @@ export default class AuthPage extends Block {
     }
     
     render() {
-        //console.log('render Reg');        
         return this.compile(template, { /* title: this.props.title */ })
     }
 }
