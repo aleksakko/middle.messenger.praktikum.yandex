@@ -10,7 +10,7 @@ class ChatsController {
         store.set('user.isLoading', true);
 
         try {
-            console.log('------------request try')
+            // console.log('------------request try')
 
             const res = await req();
 
@@ -23,13 +23,13 @@ class ChatsController {
             alert(e);
             store.set('user.error', e);
         } finally {
-            console.log('request finally');
+            // console.log('request finally');
             store.set('user.isLoading', false);
         }
     }
 
     async getChats(queryObj?: apiReqQueryChats) {
-        console.log('------------getChats start')
+        // console.log('------------getChats start')
         try {
             const chats: apiChats[] = queryObj ? 
                 await this.api.read(queryObj) : 
@@ -43,7 +43,7 @@ class ChatsController {
     }
 
     async getUsers(id: number, queryObj?: apiReqQueryChats) {
-        console.log('------------getUsers start')
+        // console.log('------------getUsers start')
         try {
             const users: apiChatUser[] = queryObj ? 
                 await this.api.readUsers(id ,queryObj) : 
@@ -59,7 +59,7 @@ class ChatsController {
 
     // получить ЧАТЫ, ПОЛЬЗОВАТЕЛЕЙ и (в будущем аватары)
     async getChatsAndUsers(queryObj?: apiReqQueryChats) {
-        console.log('------------getChats start')
+        // console.log('------------getChats start')
         try {
             const chats: apiChats[] = queryObj ? 
                 await this.api.read(queryObj) : 
@@ -71,7 +71,7 @@ class ChatsController {
                 chatsUsers.push( <any>users );
             }
             store.set('chatsUsers', chatsUsers)
-            console.log(store.getState())
+            // console.log(store.getState())
         } catch (e) {
             console.log('------------getChats catch (error)', e);
             store.set('chats.error', e);
@@ -79,14 +79,13 @@ class ChatsController {
     }
 
     async createChat(title: string): Promise<apiResCreateChat | any> {
-        console.log('------------createChat start')
+        // console.log('------------createChat start')
         const res = await this.req(async () => {
             try {
                 const res = await this.api.create(title);
                 const chat = { id: res.id, title };
                 
                 const chats = store.getState().chats ?? new Array(0);
-                console.log();
                 if (chats.unshift) chats.unshift(chat)
                  else chats.push(chat);
 
@@ -102,11 +101,11 @@ class ChatsController {
     }
 
     async deleteChat(idChat: number) {
-        console.log('------------deleteChat start')
+        // console.log('------------deleteChat start')
         const res = await this.req(async () => {
             try {
                 const res = await this.api.deleteChat(idChat);
-                console.log('чат', store.getState().chats, idChat);
+                // console.log('чат', store.getState().chats, idChat);
                 const index = store.getState().chats.findIndex(
                     (chat: Record<string, any>) => {
                         if (!chat) return false;
@@ -124,7 +123,7 @@ class ChatsController {
     }
 
     async deleteUsersFromChat(usersData: apiReqUsersChat) {
-        console.log('------------deleteUsersFromChat start')
+        // console.log('------------deleteUsersFromChat start')
         await this.req(async () => {
             try {
                 await this.api.deleteUsersFromChat(usersData)
@@ -137,15 +136,15 @@ class ChatsController {
     }
 
     async addUsersToChat(usersData: apiReqUsersChat) {
-        console.log('---------------addUsersToChat start')
+        // console.log('---------------addUsersToChat start')
         const res = await this.req(async () => {
             try {
-                console.log(usersData);
-                const res = await this.api.addUsersToChat( usersData );
-                console.log(res);
+                // console.log(usersData);
+                /* const res =  */await this.api.addUsersToChat( usersData );
+                // console.log(res);
                 const chatUsers = await this.api.readUsers( usersData.chatId );
                 
-                console.log(chatUsers);
+                // console.log(chatUsers);
                 
                 store.set(`chatsUsers.${usersData.chatId}`, chatUsers);
                 return chatUsers;
@@ -183,8 +182,8 @@ class ChatsController {
             this.socket.addEventListener('close', e => {
                 this.goPingPong && clearInterval(this.goPingPong);
                 store.remove('socket.messages');
-                console.log('PING PONG', this.goPingPong);
-                if (e.wasClean) console.log(`WEBSOCKET соединение закрыто [чат ${chatId}]`)
+                // console.log('PING PONG', this.goPingPong);
+                if (e.wasClean) console.log(`WEBSOCKET: соединение закрыто [чат ${chatId}]`)
                     else {
                         console.log(`WEBSOCKET: срыв соединения [чат ${chatId}]. Переподключение.`);
                         setTimeout(() => {
@@ -196,7 +195,7 @@ class ChatsController {
             this.socket.addEventListener('message', e => {
                 store.set('socketCheckUpdate', false)
                 store.remove('socket.msgType')
-                console.log(e)
+                // console.log(e)
                 const data: apiDataWebSocket[] | apiDataWebSocket = JSON.parse(e.data);
                 let maxMsgId = 0;
                 
@@ -213,6 +212,7 @@ class ChatsController {
                         store.set('socket.messages', arrUnreadMsgs);
                         store.set('socket.msgType', 'unread')
                         store.set('socketCheckUpdate', true);
+                        console.log('WEBSOCKET: получен пакет сообщений: ', data)
                         if (maxMsgId < data[data.length - 1].id) maxMsgId = data[data.length - 1].id;
                     }
                     if (data.length === 20) this.loadLastMessages(maxMsgId);
@@ -222,7 +222,7 @@ class ChatsController {
                     store.set('socket.messages', [data]);
                     store.set('socket.msgType', 'new')
                     store.set('socketCheckUpdate', true);
-                    console.log(data)
+                    console.log('WEBSOCKET: получено новое сообщение: ', data)
                 }
             })
 

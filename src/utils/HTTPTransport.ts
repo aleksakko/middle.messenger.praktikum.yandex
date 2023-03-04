@@ -71,7 +71,7 @@ export default class HTTPTransport {
                 if (xhr.readyState === XMLHttpRequest.DONE) {
                     if (xhr.status < 400) {
                         resolve(xhr.response);
-                        console.log(xhr.status, xhr.response);
+                        // console.log(xhr.status, xhr.response);
                     } else {
                         reject(xhr.response);
                     }

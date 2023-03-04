@@ -57,22 +57,22 @@ export default class SectionWith extends Block {
                             // api часть ссылок
                             switch (prop.todo) {
                                 case 'auth/logout': {
-                                    console.log('логаут');
+                                    console.log('ВЫХОД');
                                     AuthController.logout();
                                     break;
                                 }
                                 case 'user/settings': { //----
-                                    console.log('изменить личность');
+                                    console.log('ПЕРЕХОД: изменение данных профиля');
                                     router.go(Routes.ChangeProfile);
                                     break;
                                 }
                                 case 'user/change-password': { //----
-                                    console.log('изменить пароль');
+                                    console.log('ПЕРЕХОД: изменение пароля');
                                     router.go(Routes.ChangePassword);
                                     break;
                                 }
                                 case 'chats/messenger': { //----
-                                    console.log('к чатам');
+                                    console.log('ПЕРЕХОД: чаты');
                                     router.go(Routes.Messenger);
                                     break;
                                 }

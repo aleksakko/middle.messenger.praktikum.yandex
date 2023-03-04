@@ -133,7 +133,7 @@ export default class NavList extends Block {
                             // -------------- КЛИК ПО DELETE - УДАЛЕНИЕ ЧАТА
                             if (target.classList.contains('delete-chat')
                                 && confirm('Красивое (в будущем) окошко с вопросом:\nТочно?')) {
-                                console.log('delete-chat ', chatId)
+                                console.log('CHAT:DELETE ', chatId)
 
                                 // сделать здесь позже оптимистичное удаление, а пока с проверкой и задержкой ожидания
                                 ChatsController.deleteChat(chatId)

@@ -89,7 +89,7 @@ export class ChatsPageBase extends Block {
                             if (!resValidate[0]) {
                                 console.log('Игнорирование отправки')
                             } else {
-                                console.log('Отправлено в открытый чат:', '\n', fieldMessage.value);
+                                // console.log('Отправлено в открытый чат:', '\n', fieldMessage.value);
                                 const elemChat = document.querySelector('.this-chat') as HTMLElement;
                                 
                                 this.eventBus().emit(ChatsPageBase.TODO.MESSAGE_WRITED, elemChat.dataset.id, fieldMessage.value);
@@ -224,7 +224,7 @@ export class ChatsPageBase extends Block {
             if (state.socketCheckUpdate && state.socket?.messages) {
 
                 activeChatId = state.socket.activeChatId;
-                console.log(isEqual(lastMessageObject, state.socket.messages[0]))
+                // console.log(isEqual(lastMessageObject, state.socket.messages[0]))
 
                 if (state.socket.msgType === 'unread') {
 
@@ -324,7 +324,7 @@ export class ChatsPageBase extends Block {
                 
                 !chatIdCounter[chatId] && (chatIdCounter[chatId] = 0)
                 const counter = chatIdCounter[chatId] - this.CHATSDATA_msg_new[chatId].length;
-                console.log(counter);
+                // console.log(counter);
                 const messages = this.CHATSDATA_msg_unread[chatId];
                 if (counter < messages.length) {
                     
@@ -390,8 +390,8 @@ export class ChatsPageBase extends Block {
         // -------------------------------------------
         // подписка на событие 'сообщение написано' с получением id чата и сообщения
         this.eventBus().on(ChatsPageBase.TODO.MESSAGE_WRITED, (id, msg) => {
-            console.log(id);
-
+            console.log('MESSAGE_WRITED: ' + msg);
+            id;
             ChatsController.sendNewMessage(msg);
             
         })

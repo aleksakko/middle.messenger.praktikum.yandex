@@ -63,7 +63,7 @@ const mapStateToProps = function (this: any, state: Record<string, any>) {
         }
 
         oldData = Object.assign({}, data);
-        console.log('обновление', this.kids.form.creator);
+        // console.log('обновление', this.kids.form.creator);
     } else {
         //console.log('мимо', this)
     }

@@ -133,7 +133,7 @@ export default class Form extends Block {
                         'click': () => {
                             switch (prop.todo) {
                                 case 'user/profile': {
-                                    console.log('страница профиля');
+                                    console.log('ПЕРЕХОД: профиль');
                                     router.go(Routes.Profile);
                                     break;
                                 }
