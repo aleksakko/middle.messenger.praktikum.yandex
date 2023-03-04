@@ -1,6 +1,8 @@
 
 import EventBus from './EventBus';
+import isEqual from './isEqual';
 import randomID from './randomID';
+import { merge } from './set';
 
 type Props = Record<string, any>
 
@@ -14,10 +16,10 @@ export default class Block {
 
     public id: string;
     protected props: Props;
-    protected eventBus: () => EventBus;
+    public eventBus: () => EventBus;
     private _meta: { tagName: string; props: Props };
     private _element!: HTMLElement | HTMLInputElement | HTMLButtonElement;
-    protected kids: Record<string, Block>;
+    protected kids: Record<string, Block | any>;
 
     /** JSDoc
    * @param {string} tagName
@@ -53,6 +55,7 @@ export default class Block {
     // функция Proxi-обёртки для пропсов
     _makePropsProxy(props: Props) {
         const proxyProps = new Proxy(props, {
+            
             get(target: Props, prop: string) {
                 if (prop[0] === '_') {
                     throw new Error('Нет доступа');
@@ -60,10 +63,11 @@ export default class Block {
                 const value = target[prop];
                 return typeof value === 'function' ? value.bind(target) : value;
             },
+            
             set:(target: Props, prop: string, value) => {
                 if (prop[0] === '_') {
                     throw new Error('Нет доступа');
-                } else if (target[prop] === value) {
+                } else if (isEqual(target[prop], value)) {
                     return true;
                 } else {
                     const oldTarget = { ...target };
@@ -73,6 +77,7 @@ export default class Block {
                     return true;
                 }
             },
+            
             deleteProperty(target: Props, prop: string) {
                 if (prop[0] === '_') {
                     throw new Error('Нет доступа');
@@ -149,13 +154,15 @@ export default class Block {
 
     private _componentDidUpdate(oldProps: Props, newProps: Props) {        
         if (this.componentDidUpdate(oldProps, newProps)) {
-            console.log(`CD_Update render ${this.element}`, newProps);
+            // console.log(`CD_Update render ${this.element}`, newProps);
             this.eventBus().emit(Block.EVENTS.FLOW_RENDER);
+        } else {
+            // console.log(`Отмена CD_Update render ${this.element}`, newProps);
         }
     }
     // Переопределяется пользователем.
     protected componentDidUpdate(oldProps: Props, newProps: Props) {
-        return (oldProps !== newProps) ? true : false;
+        return (!isEqual(oldProps, newProps)) ? true : false;
     }
 
     public setProps = (nextProps: Props) => {
@@ -163,7 +170,12 @@ export default class Block {
             return;
         }
 
-        Object.assign(this.props, nextProps);
+        const { props, kids } = this._getKidsAndProps(nextProps);
+        if (Object.values(kids).length)
+            console.log(this.kids, kids);
+        
+        if (Object.values(props).length)
+            merge(this.props, nextProps);
     }
     
     private _render() {
@@ -194,7 +206,6 @@ export default class Block {
         const temp = document.createElement('template');
 
         temp.innerHTML = html;
-        
         // замена заглушек обратно на элементы
         Object.entries(this.kids).forEach(([, component]) => {
             const stub = temp.content.querySelector(`[data-id="${component.id}"]`);
@@ -223,11 +234,12 @@ export default class Block {
     }        
         
     show() {
-        this.getContent().style.display = 'block';
+
+        this.element.classList.remove('hidden');
     }
     
     hide() {
-        this.getContent().style.display = 'none';
+        this.element.classList.add('hidden');
     }
         getContent() {
             return this.element;

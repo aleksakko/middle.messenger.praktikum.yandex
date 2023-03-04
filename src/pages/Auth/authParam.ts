@@ -21,7 +21,7 @@ const AuthPageParam = [
     },
     {
         tag: 'a',
-        href: '/registration',
+        href: '/sign-up',
         label: 'впервые?'
     }
 ];

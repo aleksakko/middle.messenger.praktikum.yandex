@@ -1,50 +1,49 @@
 const ChangeProfilePageParam = [
     {
-        tag: 'avaChange',
-        href: '/',
-        label: 'сменить'
+        tag: 'avaStatic',
+        href: '/'
     },
     {
         tag: 'input',
         type: 'email',
         idName: 'email',
         label: 'почта',
-        value: 'nepetya@ya.ru'
+        value: ''
     },
     {
         tag: 'input',
         type: 'text',
         idName: 'login',
         label: 'логин',
-        value: 'petefi'
+        value: ''
     },
     {
         tag: 'input',
         type: 'text',
         idName: 'first_name',
         label: 'имя',
-        value: 'Петя'
+        value: ''
     },
     {
         tag: 'input',
         type: 'text',
         idName: 'second_name',
         label: 'фамилия',
-        value: 'Петин' 
+        value: ''
     },
     {
         tag: 'input',
         type: 'text',
         idName: 'display_name',
         label: 'псевдоним', 
-        value: 'nepetya'
+        value: ''
     },
     {
         tag: 'input',
         type: 'tel',
         idName: 'phone',
         label: 'телефон',
-        value: '+8880076723'
+        value: ''
     },
     {
         tag: 'button',
@@ -55,7 +54,10 @@ const ChangeProfilePageParam = [
     {
         tag: 'a',
         href: '/profile',
-        label: 'назад к профилю'
+        label: 'назад к профилю',
+        dataApi: true,
+        todo: 'user/profile'
     }
 ];
+
 export default ChangeProfilePageParam;

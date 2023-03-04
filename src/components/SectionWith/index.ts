@@ -3,35 +3,81 @@ import Block from '../../utils/Block';
 import Alink from '../Alink';
 import Textarea from '../Textarea';
 import Button from '../Button';
+import AuthController from '../../services/controllers/AuthController';
+
+import router, { Routes } from '../../services/router';
+import ModalAvatar from '../ModalAvatar';
 
 interface SectionWithProps {
     [key: string]: any;
 }
-
 export default class SectionWith extends Block {
-    tmpl: Record<string, Record<string, string>>;
+    tmpl!: Record<string, Record<string, string>>;
+    creator!: string;
+    PageParam!: any[];
     
     constructor(props: SectionWithProps) {
         super('section', props);
-        this.tmpl = {};
     }
     
     init() {
+        this.creator = this.props.creator;
+        
+        if (this.props.modalAvatar) this.kids.modalAva = new ModalAvatar({
+            inputImg: {
+                type: 'file',
+                idName: 'file'
+            },
+            buttonSubmit: {
+                label: 'изменить аватар',
+                type: 'submit',
+                idName: 'submitImg',
+                className: ['btn__main', 'fs25px']
+            }
+        })
+
         let i = 0;
         this.tmpl = {
             labelSpanUp: {},
             labelSpanDown: {}
         };
-        const creator = this.props.creator;
-        const PageParam = this.props[`${creator}Param`] ? this.props[`${creator}Param`] : undefined;
-        if (PageParam) PageParam.forEach((prop: Record<string, any>) => {
+
+        this.PageParam = this.props[`${this.creator}Param`] ?? undefined;
+        if (this.PageParam) this.PageParam.forEach((prop: Record<string, any>) => {
             if (prop.tag === 'a') {
                 this.kids[`alink${i++}`] = new Alink({
                     href: prop.href,
                     label: prop.label,
                     class: prop.class,
+                    dataApi: prop.dataApi, // если есть на ссылке такой аттрибут, то обрабатываем через api
+                    
                     events: {
-                        // click: (e: MouseEvent) => console.log(`clicked`, e.target)
+                        click: () => {
+                            
+                            // api часть ссылок
+                            switch (prop.todo) {
+                                case 'auth/logout': {
+                                    console.log('ВЫХОД');
+                                    AuthController.logout();
+                                    break;
+                                }
+                                case 'user/settings': { //----
+                                    console.log('ПЕРЕХОД: изменение данных профиля');
+                                    router.go(Routes.ChangeProfile);
+                                    break;
+                                }
+                                case 'user/change-password': { //----
+                                    console.log('ПЕРЕХОД: изменение пароля');
+                                    router.go(Routes.ChangePassword);
+                                    break;
+                                }
+                                case 'chats/messenger': { //----
+                                    console.log('ПЕРЕХОД: чаты');
+                                    router.go(Routes.Messenger);
+                                    break;
+                                }
+                            }
+                        }
                     }
                 })
             }
@@ -40,8 +86,21 @@ export default class SectionWith extends Block {
                     href: prop.href,
                     label: prop.label,
                     class: prop.class,
+                    dataApi: prop.dataApi,
                     events: {
-                        // click: (e: MouseEvent) => console.log(`clicked`, e.target)
+                        'click': (e: MouseEvent) => {
+                            // console.log(`clicked`, e.target)
+                            const target = e.target as HTMLLinkElement;
+                            target.classList.toggle('modal-bg-avatar');
+                            target.textContent = target.textContent ? '' : 'сменить';
+                            
+                            const elemModal = this.kids.modalAva.element;
+                            if (elemModal) elemModal.classList.toggle('hidden-vis');
+                        },
+                        'blur': (e: MouseEvent) => {
+                            const target = e.target as HTMLLinkElement;
+                            target.textContent = 'сменить';
+                        }
                     }
                 })
             }
@@ -69,17 +128,17 @@ export default class SectionWith extends Block {
         });
         if(this.props.idName) this.element.setAttribute('id', this.props.idName);
         if(this.props.className) this.element.classList.add(...this.props.className);
-        
     }
     
-    render() {   
-        //console.log('render Form');
+    render() {
+        
         return this.compile(template, { 
             title: this.props.title, 
             titletag: this.props.titletag,
             childClassName: this.props.childClassName,
             className: this.props.className,
-            tmpl: this.tmpl          
+            tmpl: this.tmpl,
+            modalAvatar: this.props.modalAvatar ?? null
         })
     }
 }

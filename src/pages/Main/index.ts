@@ -17,14 +17,13 @@ export default class MainPage extends Block {
                 href: prop.href,
                 label: prop.label,
                 events: {
-                    click: (e: MouseEvent) => console.log(`clicked`, e.target)
+                    //click: (e: MouseEvent) => console.log(`clicked`, e.target)
                 }
             })
         });
         this.element.classList.add('wrap');
     }
 
-    // сюда передадутся пропсы, передаваемые при создании инстанса new MainPage({title: 'Главная'})
     render() {        
         return this.compile(template, { /* title: this.props.title */ })
     }
@@ -32,15 +31,15 @@ export default class MainPage extends Block {
 
 const alinkInfo = [
     {
-        href: '/authorization',
+        href: '/',
         label: 'авторизация' 
     },
     {
-        href: '/registration',
+        href: '/sign-up',
         label: 'регистрация'
     },
     {
-        href: '/list-of-chats',
+        href: '/messenger',
         label: 'чаты'
     },
     {
@@ -48,7 +47,7 @@ const alinkInfo = [
         label: 'профиль'
     },
     {
-        href: '/change-profile',
+        href: '/settings',
         label: 'смена профиля'
     },
     {
