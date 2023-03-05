@@ -192,7 +192,7 @@ export default class Block {
         return new DocumentFragment(); // возвращает шаблонизатор       
     }
     // Вызывают наследники
-    protected compile(template: HandlebarsTemplateDelegate, context: Props) {
+    protected compile(template: HandlebarsTemplateDelegate, context: Props = {}) {
         const contextAndStubs = { ...context, ...this.props };
         // замена компонентов на заглушки с уникальным id
         Object.entries(this.kids).forEach(([key, component]) => {

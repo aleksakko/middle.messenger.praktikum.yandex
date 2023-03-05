@@ -116,6 +116,6 @@ export default class ModalChats extends Block {
     }
     
     render() {
-        return this.compile(template, {   })
+        return this.compile(template/* , {a:this.props.b} */)
     }
 }

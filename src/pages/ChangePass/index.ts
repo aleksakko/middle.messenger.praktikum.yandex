@@ -47,10 +47,8 @@ const mapStateToProps = function (this: any, state: Record<string, any>) {
                 })
             }
         }
-
-        // console.log('обновление', this.kids.form.creator);
     } else {
-        //console.log('мимо', this)
+        // console.log('мимо', this) // тест
     }
     return null;
 }

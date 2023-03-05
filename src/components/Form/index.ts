@@ -4,8 +4,6 @@ import Block from '../../utils/Block';
 import Input from '../Input';
 import Button from '../Button';
 import Alink from '../Alink';
-
-// !!!
 import AuthController from '../../services/controllers/AuthController';
 import UsersController from '../../services/controllers/UsersController';
 import router, { Routes } from '../../services/router';
@@ -35,7 +33,7 @@ export default class Form extends Block {
         // массив из двух элементов для сверки пароля и повтора пароля
         let passwordCheck: string[] = ['', ''];
         // подписка на событие отправки формы submit
-        // ВАЛИДАЦИЯ И ОТПРАВКА ФОРМЫ (на данный момент выводится в консоль)        
+        // ВАЛИДАЦИЯ И ОТПРАВКА ФОРМЫ
         this.element.addEventListener(
             "submit", (e) => {
                 //const target = e.target as HTMLFormElement; 
@@ -166,9 +164,7 @@ export default class Form extends Block {
                     label: prop.label,
                     class: ['hidden'],
                     events: {
-                        // click: (e: MouseEvent) => {
-                        //     console.log(`clicked`, e.target);
-                        // }
+                        //click: (e: MouseEvent) => console.log(`clicked`, e.target)
                     }
                 })
             }

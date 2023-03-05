@@ -56,6 +56,6 @@ export default class ModalAvatar extends Block {
     }
     
     render() {
-        return this.compile(template, {   })
+        return this.compile(template/* , {a:this.props.b} */)
     }
 }
