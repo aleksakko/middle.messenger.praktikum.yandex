@@ -3,13 +3,13 @@ const ErrorProps = {
         numberError: 404,
         message: 'здесь тупик',
         label: 'вернуться к чатам',
-        href: '/'
+        href: '/messenger'
     },
     '500': {
         numberError: 500,
         message: 'уже решаю',
         label: 'вернуться к чатам',
-        href: '/'
+        href: '/messenger'
     }
 }
 export default ErrorProps;

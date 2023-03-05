@@ -13,7 +13,6 @@ class ChatsController {
             // console.log('------------request try')
 
             const res = await req();
-
             
             store.set('user.error', undefined);
             return res;
@@ -61,11 +60,10 @@ class ChatsController {
     async getChatsAndUsers(queryObj?: apiReqQueryChats) {
         // console.log('------------getChats start')
         try {
-            const chats: apiChats[] = queryObj ? 
-                await this.api.read(queryObj) : 
-                await this.api.read();
+            const chats: apiChats[] = await this.api.read(queryObj ?? undefined);
             store.set('chats', chats)
             const chatsUsers: apiChatUser[][] = []
+            // комментарий ревьюера - можно запросить всех сразу одновременно, не криминал, надо сделать
             for (const chat of chats) {
                 const users = await this.api.readUsers( chat.id )
                 chatsUsers.push( <any>users );

@@ -22,11 +22,9 @@ window.addEventListener('DOMContentLoaded', async () => {
         if (!isProtectedRoute) {
             router.go(Routes.Profile)
         }
-
-        router.start();
     } catch (err) {
-        router.start();
-
         isProtectedRoute && router.go(Routes.Auth)
+    } finally {   
+        router.start();     
     }
 })

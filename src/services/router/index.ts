@@ -11,7 +11,6 @@ import ErrorPage from "../../components/Error"
 
 import Block from "../../utils/Block";
 import Route from "./Route";
-import withStore from "../withStore";
 
 export enum Routes {
     Main = '/test',

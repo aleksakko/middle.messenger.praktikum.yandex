@@ -42,7 +42,7 @@ export default class SectionWith extends Block {
             labelSpanDown: {}
         };
 
-        this.PageParam = this.props[`${this.creator}Param`] ?? undefined;
+        this.PageParam = this.props[`${this.creator}Param`];
         if (this.PageParam) this.PageParam.forEach((prop: Record<string, any>) => {
             if (prop.tag === 'a') {
                 this.kids[`alink${i++}`] = new Alink({
