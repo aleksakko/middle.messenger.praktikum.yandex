@@ -1,4 +1,5 @@
-import template from './sectionWith.hbs';
+import tagsModel from './sectionWithModel.ts';
+import Handlebars from 'handlebars';
 import Block from '../../utils/Block';
 import Alink from '../Alink';
 import Textarea from '../Textarea';
@@ -15,6 +16,7 @@ export default class SectionWith extends Block {
     tmpl!: Record<string, Record<string, string>>;
     creator!: string;
     PageParam!: any[];
+    private template!: HandlebarsTemplateDelegate;
     
     constructor(props: SectionWithProps) {
         super('section', props);
@@ -32,7 +34,7 @@ export default class SectionWith extends Block {
                 label: 'изменить аватар',
                 type: 'submit',
                 idName: 'submitImg',
-                className: ['btn__main', 'fs25px']
+                className: ['btn__main', 'fs25px', 'modal-avatar__submitImg']
             }
         })
 
@@ -128,11 +130,13 @@ export default class SectionWith extends Block {
         });
         if(this.props.idName) this.element.setAttribute('id', this.props.idName);
         if(this.props.className) this.element.classList.add(...this.props.className);
+
+        this.template = Handlebars.compile(tagsModel);
     }
     
     render() {
         
-        return this.compile(template, { 
+        return this.compile(this.template, { 
             title: this.props.title, 
             titletag: this.props.titletag,
             childClassName: this.props.childClassName,

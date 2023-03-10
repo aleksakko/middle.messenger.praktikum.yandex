@@ -1,4 +1,4 @@
-{{#if title}}<{{{titletag}}}>{{title}}</{{{titletag}}}>{{/if}}
+const tagsModel = `{{#if title}}<{{{titletag}}}>{{title}}</{{{titletag}}}>{{/if}}
 {{#if modalAvatar}}{{{modalAva}}}{{/if}}
 
 {{#with this}}
@@ -24,4 +24,6 @@
           {{{this}}}
     {{/if}}
   {{/each}}
-{{/with}}
+{{/with}}`;
+
+export default tagsModel;

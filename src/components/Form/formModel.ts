@@ -1,4 +1,4 @@
-{{#if title}}<{{{titletag}}}>{{title}}</{{{titletag}}}>{{/if}}
+const tagsModel = `{{#if title}}<{{{titletag}}}>{{title}}</{{{titletag}}}>{{/if}}
 {{#with this}}
   {{#each this}}  
     {{#if (startsWith @key "input")}}
@@ -24,4 +24,6 @@
       </div>
     {{/if}}
   {{/each}}
-{{/with}}
+{{/with}}`;
+
+export default tagsModel;

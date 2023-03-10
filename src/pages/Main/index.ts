@@ -1,4 +1,4 @@
-import template from './main.hbs';
+import Handlebars from 'handlebars';
 import Block from '../../utils/Block';
 import Alink from '../../components/Alink';
 
@@ -6,6 +6,8 @@ interface MainPageProps {
     [key: string]: string;
 }
 export default class MainPage extends Block {
+    private template!: HandlebarsTemplateDelegate;
+    
     constructor(props: MainPageProps) {
         super('main', props);        
     }
@@ -22,10 +24,26 @@ export default class MainPage extends Block {
             })
         });
         this.element.classList.add('wrap');
+
+        
+          
+        const tagsModel = `
+        <nav class="wrap__main-page"><ul>
+        {{#with this}}
+          {{#each this}}   
+            {{#if (startsWith @key "alink")}}
+              <li>{{{this}}}</li>
+            {{/if}}   
+          {{/each}}
+        {{/with}}
+        </ul></nav>
+          `;
+          
+        this.template = Handlebars.compile(tagsModel);
     }
 
-    render() {        
-        return this.compile(template, { /* title: this.props.title */ })
+    render() {      
+        return this.compile(this.template, { /* title: this.props.title */ })
     }
 }
 

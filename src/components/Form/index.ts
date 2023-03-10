@@ -1,5 +1,6 @@
 import validateElem from '../../utils/validate';
-import template from './form.hbs';
+import tagsModel from './formModel.ts';
+import Handlebars from 'handlebars';
 import Block from '../../utils/Block';
 import Input from '../Input';
 import Button from '../Button';
@@ -15,6 +16,7 @@ interface FormProps {
 export default class Form extends Block {
     tmpl!: Record<string, Record<string, string>>;
     creator!: string;
+    private template!: HandlebarsTemplateDelegate;
     
     constructor(props: FormProps) {
         super('form', props);
@@ -170,10 +172,12 @@ export default class Form extends Block {
             }
         });
         this.element.classList.add('form-cont');
+
+        this.template = Handlebars.compile(tagsModel);
     }
     
     render() {   
-        return this.compile(template, { 
+        return this.compile(this.template, { 
             title: this.props.title, 
             titletag: this.props.titletag,
             tmpl: this.tmpl          

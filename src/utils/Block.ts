@@ -1,4 +1,3 @@
-
 import EventBus from './EventBus';
 import isEqual from './isEqual';
 import randomID from './randomID';
@@ -199,7 +198,7 @@ export default class Block {
             contextAndStubs[key] = `<div data-id="${component.id}"></div>`;
         });
         // console.log(contextAndStubs);
-        
+     
         // выгрузка шаблона с заглушками в html-элементы во временный template
         const html = template(contextAndStubs);
         // console.log(html)
