@@ -4,7 +4,7 @@ export default abstract class BaseAPI {
     protected http: HTTPTransport;
 
     protected constructor(endpoint: string) {
-        this.http = new HTTPTransport(endpoint);
+        this.http = new HTTPTransport(`https://ya-praktikum.tech/api/v2${endpoint}`);
     }
 
     public abstract create?(data: unknown): Promise<unknown>
