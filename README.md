@@ -13,6 +13,7 @@
 - **`npm run build`** — build сборка Webpack, собирает `./dist/`
 + **`npm run lint`** — проверка с фиксом ошибок линтером eslint
 + **`npm run stylelint`** — проверка ошибок scss линтером stylelint
++ **`npm run test`** — запуск unit-тестов jest (BLock, HTTPTransport, Router)
 ---
 ## Часть 2. Описание изменений
 
@@ -76,3 +77,7 @@
 - Проект переведен на сборщик **Webpack**. Настроен.
 - Настроена **Docker**-сборка статического приложения.
 - Проект с **Docker**-сборкой размещен на [Render.com](https://middle-spa-aleksakko.onrender.com/)
+- Добавлен пакет Jest и написаны базовые тесты для модуля отправки запросов (HTTPTransport), Роутера и Основного компонента (Block)
+- Подключен husky для проверки перед коммитами
+
+## Вот и подошел к финалу 1 модуль!

@@ -27,7 +27,6 @@ export default class HTTPTransport {
 
     public get<Response, T>(path = '/', data?: T): Promise<Response> {
         const query = data ? `?${queryStringify(data)}` : '';
-        console.log(this.endpoint + path + query)
         return this.request<Response>( this.endpoint + path + query);
     }
     
