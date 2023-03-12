@@ -10,6 +10,6 @@ describe('Component BLock', () => {
 
     it('should be HTMLElement - <textarea>', () => {
         expect(component.getContent()).toBeInstanceOf(HTMLTextAreaElement);
-    })
+    }) // комментарий
     
 })
