@@ -7,7 +7,7 @@
     "node": ">=18.12.1"
   },
   "scripts": {
-    "start": "node ./server.js",
+    "start": "if exist dist/index.html (node ./server.js) else (npm run build && node ./server.js)",
     "dev": "webpack serve --mode=development --progress",
     "build": "webpack --mode=production --node-env=production",
     "lint": "eslint . --fix",
