@@ -1,7 +1,8 @@
 .github/
 node_modules/
-dist/
+# dist/
 ui/
 coverage/
+.husky/
 package-lock.json
 README.md
