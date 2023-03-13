@@ -1,6 +1,6 @@
 .github/
 node_modules/
-# dist/
+dist/
 ui/
 coverage/
 package-lock.json
