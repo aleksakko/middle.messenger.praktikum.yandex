@@ -9,8 +9,8 @@
 ## npm команды
 
 - **`npm run start`** — сервер Express на 3000 порту
-- **`npm run dev`** — сервер Webpack в dev-режиме,
-- **`npm run build`** — build сборка Webpack, собирает `./dist/`
+- **`npm run dev`** — dev сборка и dev-сервер Webpack на 3333 порту,
+- **`npm run build`** — prod сборка Webpack, собирает в `./dist/`
 + **`npm run lint`** — проверка с фиксом ошибок линтером eslint
 + **`npm run stylelint`** — проверка ошибок scss линтером stylelint
 + **`npm run test`** — запуск unit-тестов jest (BLock, HTTPTransport, Router)

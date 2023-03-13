@@ -103,7 +103,7 @@ export class ChatsPageBase extends Block {
         })
 
         const tagsModel = 
-            `<div class="ava-chat"></div>
+            `<div class="ava-chat" {{#if avatar}}style="background-image: url('https://ya-praktikum.tech/api/v2/resources{{avatar}}')"{{/if}}></div>
             <div class="short-info">
                 <span>{{title}} / id {{id}}</span>
                 <span class="last-msg">{{last_msg_test}}{{last_message.content}}</span>

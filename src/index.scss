@@ -361,9 +361,10 @@ body .avatar {
                 .ava-chat {
                     width: 50px;
                     height: 50px;
-                    margin: 4px;
                     background: center no-repeat url("../static/img/user1.png");
+                    margin: 4px;
                     border: 1px solid $col-shadow;
+                    background-size: 50px;
                     background-color: $col-light;
                 }
 

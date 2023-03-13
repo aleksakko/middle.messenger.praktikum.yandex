@@ -27,18 +27,18 @@ export default class HTTPTransport {
 
     public get<Response, T>(path = '/', data?: T): Promise<Response> {
         const query = data ? `?${queryStringify(data)}` : '';
-        return this.request<Response>( this.endpoint + path + query);
+        return this.request( this.endpoint + path + query);
     }
     
     public post<Response = void> (path: string, data?: unknown): Promise<Response> {
-        return this.request<Response>( this.endpoint + path, {
+        return this.request( this.endpoint + path, {
             method: METHODS.POST,
             data
         });
     }
     
     public put<Response = void> (path: string, data: unknown, apiNameMethod?: string): Promise<Response> {
-        return this.request<Response>( this.endpoint + path, {
+        return this.request( this.endpoint + path, {
             method: METHODS.PUT,
             data,
             apiNameMethod
@@ -46,14 +46,14 @@ export default class HTTPTransport {
     }
     
     public patch<Response> (path: string, data: unknown): Promise<Response> {
-        return this.request<Response>( this.endpoint + path, {
+        return this.request( this.endpoint + path, {
             method: METHODS.PATCH,
             data
         });
     }
     
     public delete<Response> (path: string, data?: unknown): Promise<Response> {
-        return this.request<Response>( this.endpoint + path, {
+        return this.request( this.endpoint + path, {
             method: METHODS.DELETE,
             data
         });

@@ -4,14 +4,10 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
-const isProduction = process.env.NODE_ENV == 'production';
-
-
 const stylesHandler = MiniCssExtractPlugin.loader;
 
 
-
-const config = {
+module.exports = {
     entry: './src/index.ts',
     output: {
         path: path.resolve(__dirname, 'dist'),
@@ -30,9 +26,9 @@ const config = {
             template: path.resolve(__dirname, 'src', 'index.html'),
             filename: 'index.html',
         }),
-
+    
         new MiniCssExtractPlugin(),
-
+    
         // Add your plugins here
         // Learn more about plugins from https://webpack.js.org/configuration/plugins/
     ],
@@ -59,7 +55,7 @@ const config = {
                 test: /\.hbs$/,
                 loader: 'handlebars-loader',
             },
-
+    
             // Add your rules for custom modules here
             // Learn more about loaders from https://webpack.js.org/loaders/
         ],
@@ -70,16 +66,4 @@ const config = {
             'handlebars': 'handlebars/dist/handlebars.min.js'
         },
     },
-};
-
-module.exports = () => {
-    if (isProduction) {
-        config.mode = 'production';
-        
-        
-    } else {
-        config.mode = 'development';
-    }
-    
-    return config;
-};
+}
