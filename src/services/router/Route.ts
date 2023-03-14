@@ -6,7 +6,7 @@ export default class Route {
     public elRoot: HTMLElement | null;
     public elTitle: HTMLTitleElement;
     public elHeadTitle: HTMLElement | null;
-    protected _title: string;
+    public title: string;
     
     constructor(
         protected _path: string,
@@ -18,7 +18,7 @@ export default class Route {
         this.elRoot = document.querySelector(this._rootQuery);
         this.elTitle = document.getElementsByTagName('title')[0];
         this.elHeadTitle = document.getElementById('header-title');
-        this._title = _propsAndTitle.title;
+        this.title = _propsAndTitle.title;
     }
 
     navigate(path: string) {
@@ -46,14 +46,14 @@ export default class Route {
             // this._block.render(this._rootQuery, this._block);
             if (this.elRoot !== null) this.elRoot.textContent = '';
             this.elRoot?.append(this._block.getContent())
-            this.elTitle.textContent = 'SPA ' + this._title;
-            if (this.elHeadTitle) this.elHeadTitle.textContent = this._title;
+            this.elTitle.textContent = 'SPA ' + this.title;
+            if (this.elHeadTitle) this.elHeadTitle.textContent = this.title;
             return;
         }
         
         
-        this.elTitle.textContent = 'SPA ' + this._title;
-        if (this.elHeadTitle) this.elHeadTitle.textContent = this._title;
+        this.elTitle.textContent = 'SPA ' + this.title;
+        if (this.elHeadTitle) this.elHeadTitle.textContent = this.title;
         if (this.elRoot !== null) this.elRoot.textContent = ''; // так может быть лучше, не будет висеть в DOM куча инстансов
         this.elRoot?.append(this._block.getContent()) // и в app висит один объект
         // this._block.show(); // если активно, то блок висит в DOM

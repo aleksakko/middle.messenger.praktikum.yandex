@@ -1,10 +1,11 @@
-@import "./styles/normalize8.0.1.css";
-@import "./styles/mixins";
+@import "./styles/normalize8.0.1.scss";
+@import "./styles/mixins.scss";
 @include font-face("Furore", "../static/fonts/Furore-webfont");
 @include font-face("PTMonoBold", "../static/fonts/PTM75F_W");
 @include font-face("PTMonoRegular", "../static/fonts/PTM55F_W");
 
 // БАЗОВЫЙ ЦВЕТ --------
+// каждая компонента отдельно R, G, B
 $base-color-r: 56;
 $base-color-g: 6;
 $base-color-b: 80;
@@ -360,9 +361,10 @@ body .avatar {
                 .ava-chat {
                     width: 50px;
                     height: 50px;
-                    margin: 4px;
                     background: center no-repeat url("../static/img/user1.png");
+                    margin: 4px;
                     border: 1px solid $col-shadow;
+                    background-size: 50px;
                     background-color: $col-light;
                 }
 
@@ -559,6 +561,15 @@ body .avatar {
     width: calc($size-ava * 3.3);
     height: calc($size-ava * 2);
     margin-top: calc($size-ava + 50px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 15px;
+
+    & > .modal-avatar__submitImg {
+        margin-top: 15px;
+        height: 3em;
+    }
 }
 
 // -----------------------------------

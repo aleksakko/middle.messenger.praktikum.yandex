@@ -1,0 +1,21 @@
+# Dockerfile для PROD docker image
+
+# необходимо предварительно 
+#   убрать "prepare": "husky install" из package.json
+#   сделать npm run build
+#   закомментировать dist/ .dockerignore
+#   если пушится в гит, то также закомментировать dist/ в .gitignore
+
+FROM node:18.12.1-alpine
+
+WORKDIR /messenger
+
+COPY package.json ./
+COPY server.js ./
+COPY dist ./dist
+
+RUN npm install --production
+
+EXPOSE 3000
+
+CMD npm run start

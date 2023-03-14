@@ -1,4 +1,4 @@
-enum METHODS {
+export enum METHODS {
     GET = 'GET',
     POST = 'POST',
     PUT = 'PUT',
@@ -12,34 +12,33 @@ type Options = {
     apiNameMethod?: string;
 }
 
-function queryStringify(data: {[key in string]: unknown}): string {
+export function queryStringify(data: {[key in string]: unknown}): string {
 	return Object.keys(data)
         .map(key => key + '=' + data[key])
         .join('&');
 }
 
 export default class HTTPTransport {
-    static API_URL = 'https://ya-praktikum.tech/api/v2';
     protected endpoint: string;
 
-    constructor(endpoint: string) {
-        this.endpoint = `${HTTPTransport.API_URL}${endpoint}`;
+    constructor(URL: string) {
+        this.endpoint = URL;
     }
 
     public get<Response, T>(path = '/', data?: T): Promise<Response> {
-        const query = data ? `?${queryStringify(data)}` : ''; 
-        return this.request<Response>( this.endpoint + path + query);
+        const query = data ? `?${queryStringify(data)}` : '';
+        return this.request( this.endpoint + path + query);
     }
     
     public post<Response = void> (path: string, data?: unknown): Promise<Response> {
-        return this.request<Response>( this.endpoint + path, {
+        return this.request( this.endpoint + path, {
             method: METHODS.POST,
             data
         });
     }
     
     public put<Response = void> (path: string, data: unknown, apiNameMethod?: string): Promise<Response> {
-        return this.request<Response>( this.endpoint + path, {
+        return this.request( this.endpoint + path, {
             method: METHODS.PUT,
             data,
             apiNameMethod
@@ -47,14 +46,14 @@ export default class HTTPTransport {
     }
     
     public patch<Response> (path: string, data: unknown): Promise<Response> {
-        return this.request<Response>( this.endpoint + path, {
+        return this.request( this.endpoint + path, {
             method: METHODS.PATCH,
             data
         });
     }
     
     public delete<Response> (path: string, data?: unknown): Promise<Response> {
-        return this.request<Response>( this.endpoint + path, {
+        return this.request( this.endpoint + path, {
             method: METHODS.DELETE,
             data
         });

@@ -1,4 +1,5 @@
-import template from './navList.hbs';
+import tagsModel from './navListModel.ts';
+import Handlebars from 'handlebars';
 import Block from '../../../utils/Block';
 import { ChatsPageBase } from '..';
 import ChatsController from '../../../services/controllers/ChatsController';
@@ -14,6 +15,7 @@ export default class NavList extends Block {
     private iGlob!: number;
     private activeChatId!: number;
     private activeChatElem!: HTMLElement;
+    private template!: HandlebarsTemplateDelegate;
 
     constructor(props: NavListProps) {
         super('nav', props);
@@ -109,6 +111,8 @@ export default class NavList extends Block {
                 
             }
         })
+
+        this.template = Handlebars.compile(tagsModel);
     }
     
     render() {   
@@ -132,7 +136,7 @@ export default class NavList extends Block {
 
                             // -------------- КЛИК ПО DELETE - УДАЛЕНИЕ ЧАТА
                             if (target.classList.contains('delete-chat')
-                                && confirm('Красивое (в будущем) окошко с вопросом:\nТочно?')) {
+                                /* && confirm('Красивое (в будущем) окошко с вопросом:\nТочно?') */) {
                                 console.log('CHAT:DELETE ', chatId)
 
                                 // сделать здесь позже оптимистичное удаление, а пока с проверкой и задержкой ожидания
@@ -198,7 +202,7 @@ export default class NavList extends Block {
 
         }
 
-        return this.compile(template, { 
+        return this.compile(this.template, { 
             arrNames: this.namesElementsOfNavList
         })
     }

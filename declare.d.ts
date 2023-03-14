@@ -13,8 +13,10 @@ declare module '*.hbs' {
 /* eslint-disable no-var */
 declare var global: any;
 declare var loggg: any;
+declare var store: any;
 declare global {
     var loggg: any;
+    var store: any;
     interface Window {
         loggg: any;
     }

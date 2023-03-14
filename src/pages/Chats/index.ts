@@ -103,7 +103,7 @@ export class ChatsPageBase extends Block {
         })
 
         const tagsModel = 
-            `<div class="ava-chat"></div>
+            `<div class="ava-chat" {{#if avatar}}style="background-image: url('https://ya-praktikum.tech/api/v2/resources{{avatar}}')"{{/if}}></div>
             <div class="short-info">
                 <span>{{title}} / id {{id}}</span>
                 <span class="last-msg">{{last_msg_test}}{{last_message.content}}</span>
@@ -131,7 +131,7 @@ export class ChatsPageBase extends Block {
             events: {
                 'click': () => {
 
-                    // ---------- СОЗДАНИЕ НОВОГО ЧАТА
+                    // ---------- СОЗДАНИЕ НОВОГО ЧАТА 
                     const nameChat = prompt('Красивое (в будущем) окошко с надписью:\nВведите имя чата'); // сделать правильнее
                     nameChat ?
                         ChatsController.createChat(nameChat)
@@ -164,6 +164,7 @@ export class ChatsPageBase extends Block {
 
         
         function getChats(this: ChatsPageBase) {
+            let counter = 10;
             ChatsController.getChats()
                 .then(() => {
                     const chats: apiChats[] = store.getState().chats;
@@ -178,8 +179,9 @@ export class ChatsPageBase extends Block {
                             this.CHATSDATA_msg_new[chat.id] = [];
                         })
                         return chats;
-                    } else {
+                    } else if (counter <= 10) {
                         getChats.call(this);
+                        counter++;
                     }
                 }).then((chats) => {
                     if(chats){

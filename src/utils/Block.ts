@@ -1,4 +1,3 @@
-
 import EventBus from './EventBus';
 import isEqual from './isEqual';
 import randomID from './randomID';
@@ -30,7 +29,7 @@ export default class Block {
 
     // START CONSTRUCTOR ---------------------------------
     constructor (tagName = "div", propsAndKids: Props = {}) {
-        loggg.push([tagName, 'start constructor Block']);
+        // loggg.push([tagName, 'start constructor Block']);
         
         const { props, kids } = this._getKidsAndProps(propsAndKids);
         this._meta = { tagName, props }; // параметры от инстанса
@@ -48,7 +47,7 @@ export default class Block {
         // запуск жизн.цикла с события init
         eventBus.emit(Block.EVENTS.INIT);
         
-        loggg.push([this.element, 'end constructor Block'])
+        // loggg.push([this.element, 'end constructor Block'])
     }
     // END CONSTRUCTOR ------------------------------------
 
@@ -199,7 +198,7 @@ export default class Block {
             contextAndStubs[key] = `<div data-id="${component.id}"></div>`;
         });
         // console.log(contextAndStubs);
-        
+     
         // выгрузка шаблона с заглушками в html-элементы во временный template
         const html = template(contextAndStubs);
         // console.log(html)
